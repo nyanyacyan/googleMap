@@ -86,12 +86,12 @@ class HtmlReplaceBase:
 # ----------------------------------------------------------------------------------
 # htmlファイルを出力する
 
-    def _html_file_write(self, update_file_path):
+    def _html_file_write(self, update_file_path, all_update_html_code):
         try:
             self.logger.info(f"******** html_replace start ********")
 
             with open(update_file_path, 'w', encoding='utf-8') as file:
-                new_html_file = file.write()
+                new_html_file = file.write(all_update_html_code)
 
             self.logger.debug(f"new_html_file:\n {new_html_file[:100]}")
 
