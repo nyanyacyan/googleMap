@@ -1,0 +1,111 @@
+# coding: utf-8
+#* htmlの置換を行う基底クラス
+# ----------------------------------------------------------------------------------
+# 2023/5/30更新
+
+# ----------------------------------------------------------------------------------
+import re
+
+
+# 自作モジュール
+from .utils import Logger, NoneChecker
+
+# ----------------------------------------------------------------------------------
+###############################################################
+# htmlを置換するクラス
+
+class HtmlReplaceBase:
+    def __init__(self, debug_mode=False):
+
+        # logger
+        self.setup_logger = Logger(__name__, debug_mode=debug_mode)
+        self.logger = self.setup_logger.setup_logger()
+
+        # noneチェック
+        self.none = NoneChecker()
+
+
+###############################################################
+# ----------------------------------------------------------------------------------
+# htmlファイルの読み込み
+
+    def _html_file_read(self, input_html_file_path):
+        try:
+            self.logger.info(f"******** _html_file_read start ********")
+
+            # htmlファイルを読み込む
+            with open(input_html_file_path, 'r', encoding='utf-8') as file:
+                html_code = file.read()
+
+            self.logger.debug(f"html_code: \n{html_code[:30]}")
+
+            self.logger.info(f"********  _html_file_read end ********")
+
+            return html_code
+
+
+        except FileNotFoundError as e:
+            self.logger.error(f"{input_html_file_path} が見つかりません。pathを確認してください: {e}")
+            raise
+
+        except Exception as e:
+            self.logger.error(f"{input_html_file_path}  読込中にエラーが発生: {e}")
+            raise
+
+
+# ----------------------------------------------------------------------------------
+# 部分一致での置換
+
+    def _partial_match_replace(self, mark_pattern, new_data, html_code, filed_name):
+        try:
+            self.logger.info(f"******** {filed_name} _replace_base start ********")
+
+            self.logger.debug(f"{filed_name} mark_pattern: {mark_pattern}")
+            self.logger.debug(f"{filed_name} new_data: {new_data}")
+            self.logger.debug(f"{filed_name} html_code: {html_code[:30]}")
+
+            # パターンを定義する（マークを定義）
+            # re.compileは部分一致させることができる
+            # →マークの間に「(.*?)」任意の文字列を最短一致でマッチさせる（非貪欲マッチ）
+            pattern = re.compile(mark_pattern, re.DOTALL)
+
+            # パターンを元に新しいデータに置換する
+            # 第１の位置引数にパターン、第二引数に新しいデータ、第三引数に置換する全体のcode
+            update_html_code = re.sub(pattern, new_data, html_code)
+
+            self.logger.debug(f"{filed_name} update_html_code: \n{update_html_code[:100]}")
+
+            self.logger.info(f"******** {filed_name}  _replace_base end ********")
+
+            return update_html_code
+
+        except Exception as e:
+            self.logger.error(f"{filed_name} _replace_base 処理中にエラーが発生: {e}")
+
+
+# ----------------------------------------------------------------------------------
+# htmlファイルを出力する
+
+    def _html_file_write(self, update_file_path):
+        try:
+            self.logger.info(f"******** html_replace start ********")
+
+            with open(update_file_path, 'w', encoding='utf-8') as file:
+                new_html_file = file.write()
+
+            self.logger.debug(f"new_html_file:\n {new_html_file[:100]}")
+
+            self.logger.info(f"********  html_replace end ********")
+
+            return new_html_file
+
+        except FileNotFoundError as e:
+            self.logger.error(f"{update_file_path} が見つかりません。pathを確認してください: {e}")
+            raise
+
+        except Exception as e:
+            self.logger.error(f"{update_file_path} 書き込み中にエラーが発生: {e}")
+            raise
+
+
+# ----------------------------------------------------------------------------------
