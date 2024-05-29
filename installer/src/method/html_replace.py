@@ -44,7 +44,7 @@ class HtmlReplace(HtmlReplaceBase):
 # ----------------------------------------------------------------------------------
 # htmlを置換する
 
-    def html_replace_process(self, html_file, mark_pattern, new_data, update_file_path):
+    def html_replace_process(self, input_html_file_path, mark_pattern, new_data, update_file_path):
         '''
         input_html_file_path  ベースとなるhtmlファイルpath
         update_file_path  アップデートされたhtml_codeのファイル出力
@@ -57,51 +57,106 @@ class HtmlReplace(HtmlReplaceBase):
             self.logger.info(f"******** html_replace_process start ********")
 
             # htmlファイルの読み込み
-            base_html_code = self._html_file_read(html_file)
+            base_html_code = self._html_file_read(input_html_file_path)
 
 
             # 店舗名
-            shop_name_update = self._partial_match_replace(mark_pattern, new_data, html_code=base_html_code, filed_name='shop_name_update')
+            shop_name_update = self._partial_match_replace(
+                mark_pattern,
+                new_data,
+                html_code=base_html_code,
+                filed_name='shop_name_update'
+            )
             time.sleep(2)
 
             # 写真
-            address_update = self._partial_match_replace(mark_pattern, new_data, html_code=shop_name_update, filed_name='address_update')
+            address_update = self._partial_match_replace(
+                mark_pattern,
+                new_data,
+                html_code=shop_name_update,
+                filed_name='address_update'
+            )
             time.sleep(2)
 
             # 市区町村
-            city_address_update = self._partial_match_replace(mark_pattern, new_data, html_code=address_update, filed_name='city_address_update')
+            city_address_update = self._partial_match_replace(
+                mark_pattern,
+                new_data,
+                html_code=address_update,
+                filed_name='city_address_update'
+            )
             time.sleep(2)
 
             # 住所を置換
-            full_address_update = self._partial_match_replace(mark_pattern, new_data, html_code=city_address_update, filed_name='full_address_update')
+            full_address_update = self._partial_match_replace(
+                mark_pattern,
+                new_data,
+                html_code=city_address_update,
+                filed_name='full_address_update'
+            )
             time.sleep(2)
 
             # 電話番号
-            tel_num_update = self._partial_match_replace(mark_pattern, new_data, html_code=full_address_update, filed_name='tel_num_update')
+            tel_num_update = self._partial_match_replace(
+                mark_pattern,
+                new_data,
+                html_code=full_address_update,
+                filed_name='tel_num_update'
+            )
             time.sleep(2)
 
             # 営業時間
-            hours_update = self._partial_match_replace(mark_pattern, new_data, html_code=tel_num_update, filed_name='hours_update')
+            hours_update = self._partial_match_replace(
+                mark_pattern,
+                new_data,
+                html_code=tel_num_update,
+                filed_name='hours_update'
+            )
             time.sleep(2)
 
             # 定休日
-            closed_day_update = self._partial_match_replace(mark_pattern, new_data, html_code=hours_update, filed_name='closed_day_update')
+            closed_day_update = self._partial_match_replace(
+                mark_pattern,
+                new_data,
+                html_code=hours_update,
+                filed_name='closed_day_update'
+            )
             time.sleep(2)
 
             # 公式サイト
-            url_update = self._partial_match_replace(mark_pattern, new_data, html_code=closed_day_update, filed_name='url_update')
+            url_update = self._partial_match_replace(
+                mark_pattern,
+                new_data,
+                html_code=closed_day_update,
+                filed_name='url_update'
+            )
             time.sleep(2)
 
             # 口コミ
-            review_update = self._partial_match_replace(mark_pattern, new_data, html_code=url_update, filed_name='review_update')
+            review_update = self._partial_match_replace(
+                mark_pattern,
+                new_data,
+                html_code=url_update,
+                filed_name='review_update'
+            )
             time.sleep(2)
 
             # ジャンル
-            genre_update = self._partial_match_replace(mark_pattern, new_data, html_code=review_update, filed_name='genre_update')
+            genre_update = self._partial_match_replace(
+                mark_pattern,
+                new_data,
+                html_code=review_update,
+                filed_name='genre_update'
+            )
             time.sleep(2)
 
             # 料金ランク
-            price_rank_update = self._partial_match_replace(mark_pattern, new_data, html_code=genre_update, filed_name='price_rank_update')
+            price_rank_update = self._partial_match_replace(
+                mark_pattern,
+                new_data,
+                html_code=genre_update,
+                filed_name='price_rank_update'
+            )
             time.sleep(2)
 
             # 全てのデータがここに集約
