@@ -44,7 +44,7 @@ class HtmlReplace(HtmlReplaceBase):
 # ----------------------------------------------------------------------------------
 # htmlを置換する
 
-    def html_replace_process(self, input_html_file_path, mark_pattern, new_data, update_file_path):
+    def html_replace_process(self, input_html_file_path, update_file_path):
         '''
         input_html_file_path  ベースとなるhtmlファイルpath
         update_file_path  アップデートされたhtml_codeのファイル出力
@@ -62,8 +62,8 @@ class HtmlReplace(HtmlReplaceBase):
 
             # 店舗名
             shop_name_update = self._partial_match_replace(
-                mark_pattern,
-                new_data,
+                mark_pattern="r'<!-- 住所:置換 start -->(.*?)<!-- 住所:置換 end -->'",
+                new_data='',
                 html_code=base_html_code,
                 filed_name='shop_name_update'
             )
@@ -71,8 +71,8 @@ class HtmlReplace(HtmlReplaceBase):
 
             # 写真
             address_update = self._partial_match_replace(
-                mark_pattern,
-                new_data,
+                mark_pattern="r'<!-- 住所:置換 start -->(.*?)<!-- 住所:置換 end -->'",
+                new_data='',
                 html_code=shop_name_update,
                 filed_name='address_update'
             )
@@ -80,8 +80,8 @@ class HtmlReplace(HtmlReplaceBase):
 
             # 市区町村
             city_address_update = self._partial_match_replace(
-                mark_pattern,
-                new_data,
+                mark_pattern="r'<!-- 住所:置換 start -->(.*?)<!-- 住所:置換 end -->'",
+                new_data='',
                 html_code=address_update,
                 filed_name='city_address_update'
             )
@@ -89,8 +89,8 @@ class HtmlReplace(HtmlReplaceBase):
 
             # 住所を置換
             full_address_update = self._partial_match_replace(
-                mark_pattern,
-                new_data,
+                mark_pattern="r'<!-- 住所:置換 start -->(.*?)<!-- 住所:置換 end -->'",
+                new_data='',
                 html_code=city_address_update,
                 filed_name='full_address_update'
             )
@@ -98,8 +98,8 @@ class HtmlReplace(HtmlReplaceBase):
 
             # 電話番号
             tel_num_update = self._partial_match_replace(
-                mark_pattern,
-                new_data,
+                mark_pattern="r'<!-- 住所:置換 start -->(.*?)<!-- 住所:置換 end -->'",
+                new_data='',
                 html_code=full_address_update,
                 filed_name='tel_num_update'
             )
@@ -107,8 +107,8 @@ class HtmlReplace(HtmlReplaceBase):
 
             # 営業時間
             hours_update = self._partial_match_replace(
-                mark_pattern,
-                new_data,
+                mark_pattern="r'<!-- 住所:置換 start -->(.*?)<!-- 住所:置換 end -->'",
+                new_data='',
                 html_code=tel_num_update,
                 filed_name='hours_update'
             )
@@ -116,8 +116,8 @@ class HtmlReplace(HtmlReplaceBase):
 
             # 定休日
             closed_day_update = self._partial_match_replace(
-                mark_pattern,
-                new_data,
+                mark_pattern="r'<!-- 住所:置換 start -->(.*?)<!-- 住所:置換 end -->'",
+                new_data='',
                 html_code=hours_update,
                 filed_name='closed_day_update'
             )
@@ -125,8 +125,8 @@ class HtmlReplace(HtmlReplaceBase):
 
             # 公式サイト
             url_update = self._partial_match_replace(
-                mark_pattern,
-                new_data,
+                mark_pattern="r'<!-- 住所:置換 start -->(.*?)<!-- 住所:置換 end -->'",
+                new_data='',
                 html_code=closed_day_update,
                 filed_name='url_update'
             )
@@ -134,8 +134,8 @@ class HtmlReplace(HtmlReplaceBase):
 
             # 口コミ
             review_update = self._partial_match_replace(
-                mark_pattern,
-                new_data,
+                mark_pattern="r'<!-- 住所:置換 start -->(.*?)<!-- 住所:置換 end -->'",
+                new_data='',
                 html_code=url_update,
                 filed_name='review_update'
             )
@@ -143,8 +143,8 @@ class HtmlReplace(HtmlReplaceBase):
 
             # ジャンル
             genre_update = self._partial_match_replace(
-                mark_pattern,
-                new_data,
+                mark_pattern="r'<!-- 住所:置換 start -->(.*?)<!-- 住所:置換 end -->'",
+                new_data='',
                 html_code=review_update,
                 filed_name='genre_update'
             )
@@ -152,8 +152,8 @@ class HtmlReplace(HtmlReplaceBase):
 
             # 料金ランク
             price_rank_update = self._partial_match_replace(
-                mark_pattern,
-                new_data,
+                mark_pattern="r'<!-- 住所:置換 start -->(.*?)<!-- 住所:置換 end -->'",
+                new_data='',
                 html_code=genre_update,
                 filed_name='price_rank_update'
             )
