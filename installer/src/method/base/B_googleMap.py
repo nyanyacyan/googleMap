@@ -60,7 +60,7 @@ class GoogleMapBase:
 
 
 # ----------------------------------------------------------------------------------
-# 検索ワードからの結果を確認する
+# jsonファイルの全ての中身を
 
     def _response_result_checker(self, json_data):
         try:
@@ -80,4 +80,36 @@ class GoogleMapBase:
 
 
 # ----------------------------------------------------------------------------------
+# jsonファイルの特定のcolumnの内容を確認
 
+    def _json_column(self, json_data, column):
+        try:
+            self.logger.info(f"******** response_result_checker 開始 ********")
+
+            self.logger.debug(f"column:{column}")
+
+            if not json_data:
+                raise ValueError("json_data がNoneです")
+
+            if column in json_data:
+                raise KeyError(f"column '{column}' が JSONデータに存在しません")
+
+            column_value = json_data[column]
+
+            self.logger.warning(f"column_value: {column_value}")
+
+            self.logger.info(f"******** response_result_checker 終了 ********")
+
+            return column_value
+
+
+        except KeyError as ke:
+            self.logger.error(f"指定されたカラムにエラーがあります: {ke}")
+
+        except ValueError as ve:
+            self.logger.error(f"指定したcolumnのデータが指定したJSONファイルにない: {ve}")
+
+        except Exception as e:
+            self.logger.error(f"response_result_checker 処理中にエラーが発生: {e}")
+
+# ----------------------------------------------------------------------------------
