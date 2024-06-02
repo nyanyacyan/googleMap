@@ -6,6 +6,7 @@
 # ----------------------------------------------------------------------------------
 import os, time
 
+from .base.utils import Logger
 
 # ----------------------------------------------------------------------------------
 ####################################################################################
@@ -16,19 +17,13 @@ class Flow:
         self.sheet = sheet
         self.logger = self.setup_logger(debug_mode=debug_mode)
 
+        # logger
+        self.setup_logger = Logger(__name__, debug_mode=debug_mode)
+        self.logger = self.setup_logger.setup_logger()
+
 
 ####################################################################################
-# ----------------------------------------------------------------------------------
 
-# Loggerセットアップ
-
-    def setup_logger(self, debug_mode=False):
-        debug_mode = os.getenv('DEBUG_MODE', 'False') == 'True'
-        logger_instance = Logger(__name__, debug_mode=debug_mode)
-        return logger_instance.get_logger()
-
-
-# ----------------------------------------------------------------------------------
 # ここから処理を記載
 #! 処理を書く前に詳細設計をコメントに残すことから始める（TODOを使う）
 
