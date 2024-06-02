@@ -111,6 +111,9 @@ class GoogleMapBase:
 
             self.logger.debug(df.head())
 
+            # DataFrameをデバッグ用にCSV出力
+            df.to_csv('result_output/res_df.csv')
+
             return df
 
         except Exception as e:
@@ -132,7 +135,7 @@ class GoogleMapBase:
                 # iterrowsは一つずつ取り出す→Indexとデータをタプルで返す
                 for index, row in df.iterrows():
                     # rowのデータからcolumnのデータをリストに入れ込んでいく
-                    store_data = [row[column] for column in columns]
+                    store_data = {column: row[column] for column in columns}
 
                     self.logger.info(f"store_data: {index} {store_data}")
 
@@ -141,7 +144,7 @@ class GoogleMapBase:
             else:
                 self.logger.error(f"dfがNoneになっている")
 
-            self.logger.info(f"store_data_list: \n{store_data_list}")
+            self.logger.warning(f"store_data_list: \n{store_data_list}")
 
             self.logger.info(f"******** get_column_data_in_df 終了 ********")
 
@@ -344,10 +347,9 @@ class GoogleMapBase:
             df = self._get_json_to_dataframe(json_data=details_data)
             time.sleep(2)
 
-            # DataFrameから必要なcolumn情報を取得
+            # DataFrameから必要なcolumn情報をリストにして取得
             self.get_column_data_in_df(df=df, columns=columns)
             time.sleep(2)
-
 
 
             self.logger.info(f"******** get_gm_df_list 終了 ********")

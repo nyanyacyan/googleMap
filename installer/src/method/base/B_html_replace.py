@@ -5,6 +5,7 @@
 
 # ----------------------------------------------------------------------------------
 import re
+from jinja2 import Environment, FileSystemLoader
 
 
 # 自作モジュール
@@ -109,3 +110,30 @@ class HtmlReplaceBase:
 
 
 # ----------------------------------------------------------------------------------
+# jinja2を使った置換
+
+    def jinja2_replace_html(self, html_file_dir, html_file, store_data_list):
+        try:
+            self.logger.info(f"******** jinja2_replace_html start ********")
+
+            self.logger.debug(f"html_file_dir: {html_file_dir}, html_file: {html_file}")
+            self.logger.debug(f"store_data_list:\n{store_data_list[:100]}")
+
+
+            # template.htmlが格納されてるディレクトリを示す
+            file_dir = Environment(loader=FileSystemLoader(html_file_dir))
+
+            # template_htmlのファイル名を指定して読み込む
+            template_html = file_dir.get_template(html_file)
+            self.logger.debug(f"template_html:\n{template_html[:100]}")
+
+            # テンプレートに沿ってデータをレンダリング（書き込んでいく）
+            output_html = template_html.render(stores_data=store_data_list)
+            self.logger.debug(f"output_html:\n{output_html[:100]}")
+
+            self.logger.info(f"******** jinja2_replace_html end ********")
+
+            return output_html
+
+        except Exception as e:
+            self.logger.error(f"jinja2_replace_html 処理中にエラーが発生: {e}")
