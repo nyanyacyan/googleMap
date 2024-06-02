@@ -4,6 +4,7 @@
 
 # ----------------------------------------------------------------------------------
 
+import time
 import requests
 import const
 import json
@@ -142,8 +143,9 @@ class GoogleMapBase:
 
             self.logger.info(f"store_data_list: \n{store_data_list}")
 
-            self.logger.info(f"******** get_column_data_in_df 開始 ********")
+            self.logger.info(f"******** get_column_data_in_df 終了 ********")
 
+            return store_data_list
 
         except Exception as e:
             self.logger.error(f"get_column_data_in_df 処理中にエラーが発生: {e}")
@@ -272,7 +274,7 @@ class GoogleMapBase:
 
     def _plase_id_request(self, api_key, place_id):
         try:
-            self.logger.info(f"******** google_map_api_request 開始 ********")
+            self.logger.info(f"******** _plase_id_request 開始 ********")
             endpoint_url = const.endpoint_url
 
             params = {
@@ -286,33 +288,71 @@ class GoogleMapBase:
             if response.status_code == 200:
                 json_data = response.json()
 
-                self.logger.info(f"******** google_map_api_request 終了 ********")
+                self.logger.info(f"******** _plase_id_request 終了 ********")
 
                 return json_data
 
 
             elif response.status_code == 500:
-                self.logger.error(f"google_map_api_request サーバーエラー")
+                self.logger.error(f"_plase_id_request サーバーエラー")
 
             else:
-                self.logger.error(f"google_map_api_request リクエストした際にエラーが発生: {response.status_code} - {response.text}")
+                self.logger.error(f"_plase_id_request リクエストした際にエラーが発生: {response.status_code} - {response.text}")
 
 
-            self.logger.info(f"******** google_map_api_request 終了 ********")
+            self.logger.info(f"******** _plase_id_request 終了 ********")
 
         except requests.exceptions.Timeout:
-            self.logger.error(f"google_map_api_request リクエストでのタイムアウトエラー")
+            self.logger.error(f"_plase_id_request リクエストでのタイムアウトエラー")
 
         except requests.exceptions.RequestException as e:
-            self.logger.error(f"google_map_api_request リクエストエラーが発生: {e}")
+            self.logger.error(f"_plase_id_request リクエストエラーが発生: {e}")
 
         except Exception as e:
-            self.logger.error(f"google_map_api_request 処理中にエラーが発生: {e}")
+            self.logger.error(f"_plase_id_request 処理中にエラーが発生: {e}")
 
         finally:
-            self.logger.info(f"******** google_map_api_request 終了 ********")
+            self.logger.info(f"******** _plase_id_request 終了 ********")
 
         return None
 
 
 # ----------------------------------------------------------------------------------
+# Google mapAPIでjson取得
+# jsonからplase_idを取得
+# plase_idから詳細が掲載されてるjsonを取得
+# jsonからDataFrameへ変換
+# DataFrameから行ごとのデータをリストへ変換する
+
+    def get_gm_df_list(self, api_key, query, columns):
+        try:
+            self.logger.info(f"******** get_gm_df_list 開始 ********")
+
+            # gmAPIリクエスト
+            json_data = self._google_map_api_request(api_key=api_key, query=query)
+            time.sleep(2)
+
+            # plase_idを取得
+            plase_id = self._get_place_id(json_data=json_data)
+            time.sleep(2)
+
+            # 詳細データを取得
+            details_data = self._plase_id_request(api_key=api_key, place_id=plase_id)
+            time.sleep(2)
+
+            # 詳細データをDataFrameに変換
+            df = self._get_json_to_dataframe(json_data=details_data)
+            time.sleep(2)
+
+            # DataFrameから必要なcolumn情報を取得
+            self.get_column_data_in_df(df=df, columns=columns)
+            time.sleep(2)
+
+
+
+            self.logger.info(f"******** get_gm_df_list 終了 ********")
+
+        except Exception as e:
+            self.logger.error(f"get_gm_df_list 処理中にエラーが発生: {e}")
+
+
