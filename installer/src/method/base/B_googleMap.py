@@ -114,15 +114,15 @@ class GoogleMapBase:
             self._response_result_checker(json_data=json_data)
 
             # json_dataの「results」部分を抜き出す
-            places = json_data.get('results', [])
+            # places = json_data.get('results', [])
 
             # jsonデータをDataFrameに変換
-            df = pd.json_normalize(places)
+            df = pd.json_normalize(json_data)
 
             self.logger.debug(df.head())
 
             # DataFrameをデバッグ用にCSV出力
-            df.to_csv('result_output/res_df.csv')
+            df.to_csv('installer/result_output/res_df.csv')
 
             return df
 
@@ -292,12 +292,42 @@ class GoogleMapBase:
 
 
 # ----------------------------------------------------------------------------------
+# place_idのリストそれぞれでリクエストを行い詳細データをリスト化する
+
+    def _place_id_requests_in_list(self, place_id_list, api_key):
+        try:
+            self.logger.info(f"******** get_results_in_place_id_list 開始 ********")
+
+            self.logger.debug(f"place_id_list: {place_id_list[:20]}")
+
+            place_details_results_list = []
+
+            # 詳細データをリスト化する
+            for place_id in place_id_list:
+                # place_idでリクエスト
+                place_details = self._place_id_request(api_key=api_key, place_id=place_id)
+                self.logger.warning(f"place_details: \n{place_details}")
+                place_details_results_list.append(place_details)
+
+            self.logger.debug(f"place_details_results_list: \n{place_details_results_list[:100]}")
+
+            self.logger.info(f"******** get_results_in_place_id_list 終了 ********")
+
+            return place_details_results_list
+
+
+        except Exception as e:
+            self.logger.error(f"get_results_in_place_id_list 処理中にエラーが発生: {e}")
+
+
+# ----------------------------------------------------------------------------------
+
 # plase_idを使ってrequestをして詳細情報を取得
 
-    def _plase_id_request(self, api_key, place_id):
+    def _place_id_request(self, api_key, place_id):
         try:
             self.logger.info(f"******** _plase_id_request 開始 ********")
-            endpoint_url = const.endpoint_url
+            endpoint_url = const.place_details_endpoint_url
 
             params = {
                 'place_id' : place_id,  # IDによる詳細情報を取得
@@ -340,6 +370,34 @@ class GoogleMapBase:
 
 
 # ----------------------------------------------------------------------------------
+# place_details_dataからresults部分を抽出してリスト化する
+
+    def _get_results_list(self, place_details_results_list):
+        try:
+            self.logger.info(f"******** _get_results_list 開始 ********")
+
+            self.logger.debug(f"place_details_results_list: {place_details_results_list[:20]}")
+
+            results_data_list = []
+
+            # results部分を抽出してリストに追加
+            for place_details in place_details_results_list:
+                if 'result' in place_details:
+                    self.logger.warning(place_details['result'])
+                    results_data_list.append(place_details['result'])
+
+            self.logger.debug(f"results_data: {results_data_list[:20]}")
+
+            self.logger.info(f"******** _get_results_list 終了 ********")
+
+            return results_data_list
+
+
+        except Exception as e:
+            self.logger.error(f"_get_results_list 処理中にエラーが発生: {e}")
+
+
+# ----------------------------------------------------------------------------------
 # Google mapAPIでjson取得
 # jsonからplase_idを取得
 # plase_idから詳細が掲載されてるjsonを取得
@@ -356,16 +414,21 @@ class GoogleMapBase:
             json_data = self._google_map_api_request(api_key=api_key, query=query)
             time.sleep(2)
 
-            # plase_idを取得
-            plase_id = self._get_place_id(json_data=json_data)
+            # plase_id_listを取得
+            plase_id_list = self._get_place_id(json_data=json_data)
             time.sleep(2)
 
             # 詳細データを取得
-            details_data = self._plase_id_request(api_key=api_key, place_id=plase_id)
+            details_data_list = self._place_id_requests_in_list(api_key=api_key, place_id_list=plase_id_list)
             time.sleep(2)
 
+            # 詳細データリストからresult部分を抽出してリストを作成
+            results_data_list= self._get_results_list(place_details_results_list=details_data_list)
+            time.sleep(2)
+
+
             # 詳細データをDataFrameに変換
-            df = self._get_json_to_dataframe(json_data=details_data)
+            df = self._get_json_to_dataframe(json_data=results_data_list)
             time.sleep(2)
 
             # DataFrameから必要なcolumn情報をリストにして取得
