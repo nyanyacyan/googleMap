@@ -6,7 +6,7 @@
 # ----------------------------------------------------------------------------------
 import os
 from method.Flow import Flow
-from method.utils import Logger, NoneChecker
+from .method.base.utils import Logger, NoneChecker
 
 ####################################################################################
 

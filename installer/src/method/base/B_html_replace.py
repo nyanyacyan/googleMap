@@ -137,3 +137,6 @@ class HtmlReplaceBase:
 
         except Exception as e:
             self.logger.error(f"jinja2_replace_html 処理中にエラーが発生: {e}")
+
+
+# ----------------------------------------------------------------------------------

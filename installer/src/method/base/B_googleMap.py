@@ -9,9 +9,12 @@ import requests
 import const
 import json
 import pandas as pd
+from dotenv import load_dotenv
 
 # 自作モジュール
 from .utils import Logger, NoneChecker
+
+load_dotenv()
 
 ###############################################################
 # googleMapApiを使ってrequest
@@ -34,6 +37,10 @@ class GoogleMapBase:
     def _google_map_api_request(self, api_key, query):
         try:
             self.logger.info(f"******** google_map_api_request 開始 ********")
+
+            self.logger.debug(f"api_key: {api_key[:5]}")
+            self.logger.debug(f"query: {query}")
+
             endpoint_url = const.endpoint_url
 
             params = {
@@ -43,19 +50,22 @@ class GoogleMapBase:
 
             response = requests.get(endpoint_url, params=params, timeout=10)
 
+            # self.logger.info(f"response: {response[:20]}")
+
+
             if response.status_code == 200:
                 json_data = response.json()
-                self.logger.info(f"******** google_map_api_request 終了 ********")
+                self.logger.info(f"リクエスト成功: {json_data}")
                 return json_data
 
             elif response.status_code == 500:
                 self.logger.error(f"google_map_api_request サーバーエラー")
+                raise Exception("サーバーエラー")
 
             else:
                 self.logger.error(f"google_map_api_request リクエストした際にエラーが発生: {response.status_code} - {response.text}")
+                raise Exception("リクエストした際にエラーが発生")
 
-
-            self.logger.info(f"******** google_map_api_request 終了 ********")
 
         except requests.exceptions.Timeout:
             self.logger.error(f"google_map_api_request リクエストでのタイムアウトエラー")
@@ -250,16 +260,25 @@ class GoogleMapBase:
             # jsonファイルの中にある'results'の中からデータを抜く
             places = json_data.get('results', [])
 
+            self.logger.debug(f"places:\n{places[:100]}")
+
+            place_id_list = []
+
             for place in places:
+                self.logger.debug(f"place:\n{place}")
 
                 # columnごとの値
-                plase_id_value = place.get('plase_id')
+                plase_id_value = place.get('place_id')
+                self.logger.warning(f"column_value: {plase_id_value}")
 
-            self.logger.warning(f"column_value: {plase_id_value}")
+                place_id_list.append(plase_id_value)
+
+            self.logger.warning(f"place_id_list: {place_id_list}")
+
 
             self.logger.info(f"******** _get_place_id 終了 ********")
 
-            return plase_id_value
+            return place_id_list
 
 
         except KeyError as ke:
@@ -330,6 +349,8 @@ class GoogleMapBase:
     def get_gm_df_list(self, api_key, query, columns):
         try:
             self.logger.info(f"******** get_gm_df_list 開始 ********")
+            self.logger.info(f"api_key: {api_key[:10]}")
+
 
             # gmAPIリクエスト
             json_data = self._google_map_api_request(api_key=api_key, query=query)
@@ -358,3 +379,4 @@ class GoogleMapBase:
             self.logger.error(f"get_gm_df_list 処理中にエラーが発生: {e}")
 
 
+# ----------------------------------------------------------------------------------
