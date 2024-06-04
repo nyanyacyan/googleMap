@@ -20,7 +20,8 @@ load_dotenv()
 # googleMapApiを使ってrequest
 
 class GoogleMapBase:
-    def __init__(self, debug_mode=False):
+    def __init__(self, api_key, debug_mode=False):
+        self.api_key = api_key
 
         # logger
         self.setup_logger = Logger(__name__, debug_mode=debug_mode)
@@ -34,18 +35,17 @@ class GoogleMapBase:
 # ----------------------------------------------------------------------------------
 # Google mapAPIへのrequest
 
-    def _google_map_api_request(self, api_key, query):
+    def _google_map_api_request(self, query):
         try:
             self.logger.info(f"******** google_map_api_request 開始 ********")
 
-            self.logger.debug(f"api_key: {api_key[:5]}")
             self.logger.debug(f"query: {query}")
 
             endpoint_url = const.endpoint_url
 
             params = {
                 'query' : query,  # 検索ワード
-                'key' : api_key
+                'key' : self.api_key
             }
 
             response = requests.get(endpoint_url, params=params, timeout=10)
@@ -294,7 +294,7 @@ class GoogleMapBase:
 # ----------------------------------------------------------------------------------
 # place_idのリストそれぞれでリクエストを行い詳細データをリスト化する
 
-    def _place_id_requests_in_list(self, place_id_list, api_key):
+    def _place_id_requests_in_list(self, place_id_list):
         try:
             self.logger.info(f"******** get_results_in_place_id_list 開始 ********")
 
@@ -305,7 +305,7 @@ class GoogleMapBase:
             # 詳細データをリスト化する
             for place_id in place_id_list:
                 # place_idでリクエスト
-                place_details = self._place_id_request(api_key=api_key, place_id=place_id)
+                place_details = self._place_id_request(place_id=place_id)
                 self.logger.warning(f"place_details: \n{place_details}")
                 place_details_results_list.append(place_details)
 
@@ -324,14 +324,14 @@ class GoogleMapBase:
 
 # plase_idを使ってrequestをして詳細情報を取得
 
-    def _place_id_request(self, api_key, place_id):
+    def _place_id_request(self, place_id):
         try:
             self.logger.info(f"******** _plase_id_request 開始 ********")
             endpoint_url = const.place_details_endpoint_url
 
             params = {
                 'place_id' : place_id,  # IDによる詳細情報を取得
-                'key' : api_key
+                'key' : self.api_key
             }
 
             response = requests.get(endpoint_url, params=params, timeout=10)
@@ -398,20 +398,204 @@ class GoogleMapBase:
 
 
 # ----------------------------------------------------------------------------------
+# DataFrameにする
+
+    def _to_df(self, list_data, new_column):
+        try:
+            self.logger.info(f"******** _to_df 開始 ********")
+
+            self.logger.debug(f"list_data: {list_data}")
+
+            series_df = pd.DataFrame(list_data, columns=[new_column])
+
+            self.logger.debug(series_df.head())
+
+            self.logger.info(f"******** _to_df 終了 ********")
+
+            return series_df
+
+        except Exception as e:
+            self.logger.error(f"_to_df 処理中にエラーが発生: {e}")
+
+
+# ----------------------------------------------------------------------------------
+# 既存のDataFrameに結合させる
+
+    def _df_marge(self, key_df, add_df):
+        try:
+            self.logger.info(f"******** _df_marge 開始 ********")
+
+            self.logger.debug(f"key_df: \n{key_df.head(3)}")
+            self.logger.debug(f"add_df: \n{add_df.head(3)}")
+
+            new_df = pd.merge(key_df, add_df, left_index=True, right_index=True, how='left')
+
+            self.logger.warning(f"new_df: \n{new_df.head(3)}")
+
+            self.logger.info(f"******** _df_marge 終了 ********")
+
+            return new_df
+
+        except Exception as e:
+            self.logger.error(f"_df_marge 処理中にエラーが発生: {e}")
+
+
+# ----------------------------------------------------------------------------------
+# DataFrameからcolumnデータを抽出
+
+    def _get_column_data(self, key_df, column):
+        try:
+            self.logger.info(f"******** _get_column_data 開始 ********")
+
+            self.logger.debug(f"key_df: \n{key_df.head(3)}")
+
+            series_data = key_df[column]
+
+            self.logger.debug(f"series_data: \n{series_data[3]}")
+
+            self.logger.info(f"******** _get_column_data 終了 ********")
+
+            return series_data
+
+        except Exception as e:
+            self.logger.error(f"_get_column_data 処理中にエラーが発生: {e}")
+
+
+
+# ----------------------------------------------------------------------------------
+# 住所を日本語に変換するためにGeocoding APIを通す
+
+    def _address_to_japanese(self, address):
+        try:
+            self.logger.info(f"******** address_to_japanese 開始 ********")
+
+            self.logger.debug(f"list_data: {address}")
+
+            endpoint_url = const.geocoding_endpoint_url
+
+            self.logger.warning(f"endpoint_url: {endpoint_url}")
+
+            params ={
+                'address' : address,
+                'key' : self.api_key,
+                'language' : 'ja'
+            }
+
+            # Geocodingへリクエスト
+            response = requests.get(endpoint_url, params=params)
+
+            # 送信のステータスcodeがOKだったら
+            if response.status_code == 200:
+                response_json = response.json()
+                self.logger.info("リクエスト成功")
+
+                self.logger.info(response_json)
+
+                # ステータスがOKだったら
+                if response_json['status'] == 'OK':
+                    self.logger.info("ステータスOK")
+
+                    # jsonデータのresultsの中のformatted_addressを取得
+                    formatted_address = response_json['results'][0]['formatted_address']
+                    self.logger.warning(f"formatted_address: {formatted_address}")
+
+                    # 余計な文字を除去
+                    clean_address = self._str_Remove(value=formatted_address, str_remove="日本、")
+
+                    self.logger.info(f"******** address_to_japanese 終了 ********")
+
+                    return clean_address
+
+                else:
+                    raise Exception(f"ステータスがOKになってない {response_json['status']}")
+
+            else:
+                raise Exception(f"リクエスト中にエラーが発生 {response.status_code}")
+
+
+        except Exception as e:
+            self.logger.error(f"address_to_japanese 処理中にエラーが発生: {e}")
+
+
+# ----------------------------------------------------------------------------------
+# 余計な文字が入るためクリーニング
+
+    def _str_Remove(self, value, str_remove):
+        try:
+            self.logger.info(f"******** _str_Remove 開始 ********")
+
+            self.logger.debug(f"str_remove: {str_remove}")
+
+            if str_remove in value:
+                self.logger.info(f"{value} に {str_remove} を発見")
+
+                # 対象の文字を除去
+                remove_value = value.replace(str_remove, "")
+                self.logger.debug(f"remove_value: {remove_value}")
+                return remove_value
+
+            else:
+                self.logger.error(f"{value} には {str_remove} はありません。")
+                return value
+
+
+            self.logger.info(f"******** _str_Remove 終了 ********")
+
+
+        except Exception as e:
+            self.logger.error(f"_str_Remove 処理中にエラーが発生: {e}")
+            raise
+
+
+# ----------------------------------------------------------------------------------
+# 各リストに処理を当て込めていく
+
+    def add_process_value_in_list(self, list_data, add_func):
+        try:
+            self.logger.info(f"******** DfProcessMerge 開始 ********")
+
+            self.logger.debug(f"list_data: {list_data}")
+
+            original_data_list = []
+
+            # 値に処理を加えてリストにまとめる
+            for data in list_data:
+                original_data = add_func(data)
+                self.logger.info(f"original_data: {original_data}")
+                original_data_list.append(original_data)
+
+            self.logger.info(f"original_data_list: {original_data_list}")
+
+            self.logger.info(f"******** DfProcessMerge 終了 ********")
+
+            return original_data_list
+
+        except Exception as e:
+            self.logger.error(f"DfProcessMerge 処理中にエラーが発生: {e}")
+
+# ----------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
+
+
+
+# ----------------------------------------------------------------------------------
 # Google mapAPIでjson取得
 # jsonからplase_idを取得
 # plase_idから詳細が掲載されてるjsonを取得
 # jsonからDataFrameへ変換
 # DataFrameから行ごとのデータをリストへ変換する
 
-    def get_gm_df_list(self, api_key, query, columns):
+    def get_gm_df_list(self, query, columns):
         try:
             self.logger.info(f"******** get_gm_df_list 開始 ********")
-            self.logger.info(f"api_key: {api_key[:10]}")
 
 
             # gmAPIリクエスト
-            json_data = self._google_map_api_request(api_key=api_key, query=query)
+            json_data = self._google_map_api_request(query=query)
             time.sleep(2)
 
             # plase_id_listを取得
@@ -419,7 +603,7 @@ class GoogleMapBase:
             time.sleep(2)
 
             # 詳細データを取得
-            details_data_list = self._place_id_requests_in_list(api_key=api_key, place_id_list=plase_id_list)
+            details_data_list = self._place_id_requests_in_list(place_id_list=plase_id_list)
             time.sleep(2)
 
             # 詳細データリストからresult部分を抽出してリストを作成
@@ -430,6 +614,18 @@ class GoogleMapBase:
             # 詳細データをDataFrameに変換
             df = self._get_json_to_dataframe(json_data=results_data_list)
             time.sleep(2)
+
+            #TODO 変換しなければならない箇所
+            #TODO 住所→formatted_addressをGoogle Maps Geocoding APIを使うことで日本語変換する→dfにして結合
+            #TODO レビュ→profile_photo_url, author_name, rating, text, →それぞれの項目を作成なし（-）
+            #TODO 星評価→ありなし
+            #TODO 業種
+            #TODO 営業時間
+            #TODO 定休日
+            #TODO 写真→ありなし
+            #TODO website→ありなし
+
+
 
             # DataFrameから必要なcolumn情報をリストにして取得
             self.get_column_data_in_df(df=df, columns=columns)
