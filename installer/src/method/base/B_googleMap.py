@@ -536,11 +536,10 @@ class GoogleMapBase:
 
             else:
                 self.logger.error(f"{value} には {str_remove} はありません。")
-                return value
-
 
             self.logger.info(f"******** _str_Remove 終了 ********")
 
+            return value
 
         except Exception as e:
             self.logger.error(f"_str_Remove 処理中にエラーが発生: {e}")
@@ -615,13 +614,14 @@ class GoogleMapBase:
             df = self._get_json_to_dataframe(json_data=results_data_list)
             time.sleep(2)
 
-            #TODO 変換しなければならない箇所
-            #TODO 住所→formatted_addressをGoogle Maps Geocoding APIを使うことで日本語変換する→dfにして結合
-            #TODO レビュ→profile_photo_url, author_name, rating, text, →それぞれの項目を作成なし（-）
-            #TODO 星評価→ありなし
-            #TODO 業種
+            #! 変換しなければならない箇所
+            # 住所→formatted_addressをGoogle Maps Geocoding APIを使うことで日本語変換する→dfにして結合
+
             #TODO 営業時間
             #TODO 定休日
+
+            #TODO レビュ→profile_photo_url, author_name, rating, text, →それぞれの項目を作成なし（-）
+
             #TODO 写真→ありなし
             #TODO website→ありなし
 
