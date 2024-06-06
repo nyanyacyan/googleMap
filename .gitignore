@@ -68,10 +68,7 @@ DebugScreenshot/
 
 # pycache
 __pycache__/
-*.pyc
-
-データファイル
-const.py
+*.pycache
 
 bin/
 
