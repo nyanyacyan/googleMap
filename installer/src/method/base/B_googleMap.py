@@ -90,7 +90,7 @@ class GoogleMapBase:
             self.logger.info(f"******** response_result_checker 開始 ********")
 
             if json_data:
-                self.logger.warning(json.dumps(json_data, indent=2, ensure_ascii=False))
+                self.logger.debug(json.dumps(json_data, indent=2, ensure_ascii=False))
 
             else:
                 raise Exception("json_data データがなし")
@@ -154,7 +154,7 @@ class GoogleMapBase:
             else:
                 self.logger.error(f"dfがNoneになっている")
 
-            self.logger.warning(f"store_data_list: \n{store_data_list}")
+            self.logger.debug(f"store_data_list: \n{store_data_list}")
 
             self.logger.info(f"******** get_column_data_in_df 終了 ********")
 
@@ -189,7 +189,7 @@ class GoogleMapBase:
                 # columnごとの値
                 column_value = place.get(column)
 
-            self.logger.warning(f"column_value: {column_value}")
+            self.logger.debug(f"column_value: {column_value}")
 
             self.logger.info(f"******** _json_column 終了 ********")
 
@@ -231,7 +231,7 @@ class GoogleMapBase:
                 else:
                     raise KeyError(f"指定したcolumn '{column}/{column2}/{column3}'が jsonデータに存在しない")
 
-            self.logger.warning(f"column_value: {column_value}")
+            self.logger.debug(f"column_value: {column_value}")
 
             self.logger.info(f"******** response_result_checker 終了 ********")
 
@@ -269,11 +269,11 @@ class GoogleMapBase:
 
                 # columnごとの値
                 plase_id_value = place.get('place_id')
-                self.logger.warning(f"column_value: {plase_id_value}")
+                self.logger.debug(f"column_value: {plase_id_value}")
 
                 place_id_list.append(plase_id_value)
 
-            self.logger.warning(f"place_id_list: {place_id_list}")
+            self.logger.debug(f"place_id_list: {place_id_list}")
 
 
             self.logger.info(f"******** _get_place_id 終了 ********")
@@ -306,7 +306,7 @@ class GoogleMapBase:
             for place_id in place_id_list:
                 # place_idでリクエスト
                 place_details = self._place_id_request(place_id=place_id)
-                self.logger.warning(f"place_details: \n{place_details}")
+                self.logger.debug(f"place_details: \n{place_details}")
                 place_details_results_list.append(place_details)
 
             self.logger.debug(f"place_details_results_list: \n{place_details_results_list[:100]}")
@@ -383,7 +383,7 @@ class GoogleMapBase:
             # results部分を抽出してリストに追加
             for place_details in place_details_results_list:
                 if 'result' in place_details:
-                    self.logger.warning(place_details['result'])
+                    self.logger.debug(place_details['result'])
                     results_data_list.append(place_details['result'])
 
             self.logger.debug(f"results_data: {results_data_list[:20]}")
@@ -430,7 +430,7 @@ class GoogleMapBase:
 
             new_df = pd.merge(key_df, add_df, left_index=True, right_index=True, how='left')
 
-            self.logger.warning(f"new_df: \n{new_df.head(3)}")
+            self.logger.debug(f"new_df: \n{new_df.head(3)}")
 
             self.logger.info(f"******** _df_marge 終了 ********")
 
@@ -473,7 +473,7 @@ class GoogleMapBase:
 
             endpoint_url = const.geocoding_endpoint_url
 
-            self.logger.warning(f"endpoint_url: {endpoint_url}")
+            self.logger.debug(f"endpoint_url: {endpoint_url}")
 
             params ={
                 'address' : address,
@@ -497,7 +497,7 @@ class GoogleMapBase:
 
                     # jsonデータのresultsの中のformatted_addressを取得
                     formatted_address = response_json['results'][0]['formatted_address']
-                    self.logger.warning(f"formatted_address: {formatted_address}")
+                    self.logger.debug(f"formatted_address: {formatted_address}")
 
                     # 余計な文字を除去
                     clean_address = self._str_Remove(value=formatted_address, str_remove="日本、")
