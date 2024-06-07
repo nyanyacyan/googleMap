@@ -40,6 +40,7 @@ class Test:
             query=query,
         )
 
+        # 住所
         add_jpanese_address = self.df_merge.process(
             key_df = key_df,
             column = 'formatted_address',
@@ -47,6 +48,7 @@ class Test:
             new_column = 'japanese_address'
         )
 
+        # 営業時間
         add_business_hours =self.df_merge.process(
             key_df = add_jpanese_address,  # 更新したDataFrameを入れる
             column = 'opening_hours.periods',
@@ -54,7 +56,8 @@ class Test:
             new_column = 'business_hours'
         )
 
-        add_close_days =self.df_merge.process(
+        # 定休日
+        Last_df =self.df_merge.process(
             key_df = add_business_hours,  # 更新したDataFrameを入れる
             column = 'opening_hours.periods',
             add_func = self.gm_geocoding.get_close_days,
@@ -62,8 +65,14 @@ class Test:
         )
 
 
-        return add_close_days
+        return Last_df
 
+
+# TODO DataFrameに余計なcolumnを削除する
+# TODO 
+# TODO 
+# TODO 
+# TODO 
 
 
 

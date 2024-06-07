@@ -333,7 +333,8 @@ class GoogleMapBase:
 
             params = {
                 'place_id' : place_id,  # IDによる詳細情報を取得
-                'key' : self.api_key
+                'key' : self.api_key,
+                'language' : 'ja'
             }
 
             response = requests.get(endpoint_url, params=params, timeout=10)
@@ -563,7 +564,7 @@ class GoogleMapBase:
             for data in list_data:
                 # もしデータがない場合には追記する
                 if data is None or (isinstance(data, float) and math.isnan(data)):
-                    self.logger.warning(f"dataがNone")
+                    self.logger.info(f"dataがNone")
                     original_data_list.append("google map に情報がありません")
 
                 else:
@@ -733,7 +734,94 @@ class GoogleMapBase:
 
 
 # ----------------------------------------------------------------------------------
+# レビューの抽出
+
+    def get_reviews(self, list_data):
+        try:
+            self.logger.info(f"******** get_reviews 開始 ********")
+
+            # if list_data:
+            self.logger.debug(f"list_dataの型は: \n{type(list_data)}")
+
+            self.logger.debug(f"list_data: \n{list_data}")
+
+            list_data.to_csv('installer/result_output/list_data.csv')
+
+            if isinstance(list_data, pd.Series):
+                self.logger.debug(f"list_dataはSeriesになってる。")
+
+                list_data = list_data.apply(lambda x: ['google map に情報がありません'] if pd.isna(x) else x).tolist()
+                # list_data = [item for sublist in list_data for item in sublist]
+
+            # rank 順にソート
+            sorted_reviews = sorted(list_data, key=lambda x: x['rating'], reverse=True)
+            self.logger.debug(f"sorted_reviews: \n{sorted_reviews}")
+
+            # 必要な情報を抜き取る
+            review_dicts = [
+                {
+                    'rank': review['rating'],
+                    'name': review['author_name'],
+                    'text': review['text']
+                } for review in sorted_reviews
+            ]
+
+            self.logger.debug(f"review_dicts: \n{review_dicts}")
+
+            self.logger.info(f"******** get_reviews 終了 ********")
+
+            return review_dicts
+
+                # else:
+                #     raise ValueError("list_data が None")
+
+
+        except ValueError as ve:
+            self.logger.error(f"list_data が None: {ve}")
+
+        except Exception as e:
+            self.logger.error(f"get_reviews 処理中にエラーが発生: {e}")
+
 # ----------------------------------------------------------------------------------
+# 各リストに処理を当て込めていく
+
+    def add_dict_data(self, list_data, add_func):
+        try:
+            self.logger.info(f"******** add_process_value_in_list 開始 ********")
+
+            self.logger.debug(f"list_data: \n{list_data}")
+
+            original_data_list = []
+
+            # 値に処理を加えてリストにまとめる
+            for data in list_data:
+                # もしデータがない場合には追記する
+                if data is None or (isinstance(data, float) and math.isnan(data)):
+                    self.logger.warning(f"dataがNone")
+                    original_data_list.append("google map に情報がありません")
+
+                else:
+                    original_data = add_func(data)
+                    self.logger.warning(f"original_data: {original_data}")
+
+                    # もしリストのデータだったら結合させてリストに追加
+                    if isinstance(original_data, list):
+                        original_data_list.append(original_data)
+                    else:
+                        self.logger.error(f"データが違う可能性が高い。")
+
+            self.logger.warning(f"original_data_list: {original_data_list}")
+
+            self.logger.info(f"******** add_process_value_in_list 終了 ********")
+
+            return original_data_list
+
+        except Exception as e:
+            self.logger.error(f"add_process_value_in_list 処理中にエラーが発生: {e}")
+
+
+# ----------------------------------------------------------------------------------
+
 # ----------------------------------------------------------------------------------
 
 
