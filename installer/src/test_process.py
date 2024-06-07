@@ -40,12 +40,23 @@ class Test:
             query=query,
         )
 
-        self.df_merge.process(
+        add_jpanese_address = self.df_merge.process(
             key_df = key_df,
             column = 'formatted_address',
             add_func = self.gm_geocoding._address_to_japanese,
             new_column = 'japanese_address'
         )
+
+        add_business_hours =self.df_merge.process(
+            key_df = add_jpanese_address,  # 更新したDataFrameを入れる
+            column = 'opening_hours.periods',
+            add_func = self.gm_geocoding.get_business_hour,
+            new_column = 'business_hours'
+        )
+
+
+        return add_business_hours
+
 
 
 

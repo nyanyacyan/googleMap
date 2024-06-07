@@ -8,6 +8,8 @@ import time
 import requests
 import const
 import json
+import math
+import numpy as np
 import pandas as pd
 from dotenv import load_dotenv
 
@@ -551,29 +553,120 @@ class GoogleMapBase:
 
     def add_process_value_in_list(self, list_data, add_func):
         try:
-            self.logger.info(f"******** DfProcessMerge 開始 ********")
+            self.logger.info(f"******** add_process_value_in_list 開始 ********")
 
-            self.logger.debug(f"list_data: {list_data}")
+            self.logger.debug(f"list_data: \n{list_data}")
 
             original_data_list = []
 
             # 値に処理を加えてリストにまとめる
             for data in list_data:
-                original_data = add_func(data)
-                self.logger.info(f"original_data: {original_data}")
-                original_data_list.append(original_data)
+                # もしデータがない場合には追記する
+                if data is None or (isinstance(data, float) and math.isnan(data)):
+                    self.logger.warning(f"dataがNone")
+                    original_data_list.append(f"google map に情報がありません")
 
-            self.logger.info(f"original_data_list: {original_data_list}")
+                else:
+                    original_data = add_func(data)
+                    self.logger.warning(f"original_data: {original_data}")
+                    original_data_list.append(original_data)
 
-            self.logger.info(f"******** DfProcessMerge 終了 ********")
+            self.logger.warning(f"original_data_list: {original_data_list}")
+
+            self.logger.info(f"******** add_process_value_in_list 終了 ********")
 
             return original_data_list
 
         except Exception as e:
-            self.logger.error(f"DfProcessMerge 処理中にエラーが発生: {e}")
+            self.logger.error(f"add_process_value_in_list 処理中にエラーが発生: {e}")
+
 
 # ----------------------------------------------------------------------------------
+# 営業時間を抽出
+
+    def get_business_hour(self, list_data):
+        try:
+            self.logger.info(f"******** get_business_hour 開始 ********")
+            self.logger.info(f"list_data: {list_data}")
+
+            # APIデータに基づいて曜日を定義
+            days_of_week = ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"]
+
+            business_hours_lst = []
+
+            for day_data in list_data:
+                self.logger.warning(f"day_data:\n{day_data}")
+
+                if not isinstance(day_data, dict):
+                    self.logger.error(f"無効なデータ型: {type(day_data)}")
+                    continue
+
+
+                # 曜日データを用意してそのデータに取得したデータを割り当てる
+                day = days_of_week[day_data['open']['day']]
+
+                # 数値データを取得
+                open_time = day_data['open']['time']
+                close_time = day_data['close']['time']
+
+
+                self.logger.debug(f"open_time: {open_time}, close_time: {close_time}")
+                self.logger.debug(f"open_time: {open_time}, close_time: {close_time}")
+
+                # 時間をサイトに表記する文字列に変換
+                format_open_time = self._format_time(open_time)
+                format_close_time = self._format_time(close_time)
+
+
+                # 曜日ごとの時間を示す
+                format_business_hour = f" {day} : {format_open_time} 〜 {format_close_time}"
+
+                self.logger.info(f"format_business_hour: {format_business_hour}")
+
+                business_hours_lst.append(format_business_hour)
+
+            self.logger.info(f"******** get_business_hour 終了 ********")
+
+            return business_hours_lst
+
+
+        except Exception as e:
+            self.logger.error(f"get_business_hour 処理中にエラーが発生: {e}")
+
+
+
 # ----------------------------------------------------------------------------------
+# 0から始まる時間から頭の０を消去する
+
+    def _format_time(self, time_str):
+        try:
+            self.logger.info(f"******** _format_time 開始 ********")
+
+            self.logger.info(f"time_str: {time_str}")
+
+            if time_str:
+
+                formatted_time = f"{time_str[:2]}時{time_str[2:]}分"
+
+                # もし頭の文字が「0」だったら
+                if formatted_time.startswith('0'):
+                    # ２つ目の文字からにすることで「０」を除去
+                    formatted_time = formatted_time[1:]
+
+            else:
+                raise ValueError("time_strが空です。")
+
+            self.logger.info(f"******** _format_time 終了 ********")
+
+            return formatted_time
+
+        except ValueError as ve:
+            self.logger.error(f"time_strが None です{ve}")
+
+        except Exception as e:
+            self.logger.error(f"_format_time 処理中にエラーが発生: {e}")
+
+
 # ----------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------
