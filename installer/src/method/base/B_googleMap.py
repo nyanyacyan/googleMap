@@ -564,12 +564,17 @@ class GoogleMapBase:
                 # もしデータがない場合には追記する
                 if data is None or (isinstance(data, float) and math.isnan(data)):
                     self.logger.warning(f"dataがNone")
-                    original_data_list.append(f"google map に情報がありません")
+                    original_data_list.append(["google map に情報がありません"])
 
                 else:
                     original_data = add_func(data)
                     self.logger.warning(f"original_data: {original_data}")
-                    original_data_list.append(original_data)
+
+                    # もしリストのデータだったら結合させてリストに追加
+                    if isinstance(original_data, list):
+                        original_data_list.append("\n".join(original_data))
+                    else:
+                        original_data_list.append(original_data)
 
             self.logger.warning(f"original_data_list: {original_data_list}")
 
@@ -619,7 +624,7 @@ class GoogleMapBase:
 
 
                 # 曜日ごとの時間を示す
-                format_business_hour = f" {day} : {format_open_time} 〜 {format_close_time}"
+                format_business_hour = f"{day} : {format_open_time} 〜 {format_close_time}"
 
                 self.logger.info(f"format_business_hour: {format_business_hour}")
 
