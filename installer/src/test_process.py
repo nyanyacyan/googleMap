@@ -54,8 +54,15 @@ class Test:
             new_column = 'business_hours'
         )
 
+        add_close_days =self.df_merge.process(
+            key_df = add_business_hours,  # 更新したDataFrameを入れる
+            column = 'opening_hours.periods',
+            add_func = self.gm_geocoding.get_close_days,
+            new_column = 'close_days'
+        )
 
-        return add_business_hours
+
+        return add_close_days
 
 
 

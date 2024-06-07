@@ -564,7 +564,7 @@ class GoogleMapBase:
                 # もしデータがない場合には追記する
                 if data is None or (isinstance(data, float) and math.isnan(data)):
                     self.logger.warning(f"dataがNone")
-                    original_data_list.append(["google map に情報がありません"])
+                    original_data_list.append("google map に情報がありません")
 
                 else:
                     original_data = add_func(data)
@@ -600,7 +600,7 @@ class GoogleMapBase:
             business_hours_lst = []
 
             for day_data in list_data:
-                self.logger.warning(f"day_data:\n{day_data}")
+                self.logger.debug(f"day_data:\n{day_data}")
 
                 if not isinstance(day_data, dict):
                     self.logger.error(f"無効なデータ型: {type(day_data)}")
@@ -673,6 +673,65 @@ class GoogleMapBase:
 
 
 # ----------------------------------------------------------------------------------
+# 定休日を抽出
+
+    def get_close_days(self, list_data):
+        try:
+            self.logger.info(f"******** get_close_day 開始 ********")
+
+            if list_data:
+                self.logger.debug(f"list_data: {list_data}")
+
+                # APIデータに基づいて曜日を定義
+                days_of_week = ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"]
+
+            for day_data in list_data:
+                self.logger.debug(f"day_data:\n{day_data}")
+
+                if not isinstance(day_data, dict):
+                    self.logger.error(f"無効なデータ型: {type(day_data)}")
+                    continue
+
+                # setにてやっている曜日の数値を取得
+                open_day = {day_data['open']['day'] for day_data in list_data}
+
+                # set 関数にて７個までの長さを集合を作成（0, 1, 2, 3, 4, 5, 6）
+                all_days = set(range(7))
+                self.logger.debug(f"all_days:\n{all_days}")
+
+                # すべての集合から被ってるオープンしてる曜日の数値を除去する
+                close_days_list = all_days - open_day
+                self.logger.debug(f"close_days_list:{close_days_list}")
+
+                if not close_days_list:
+                    return "なし"
+
+                # 曜日を文字列に置き換える
+                # セットのため、一つ一つの数値を当て込んでその曜日を取得してリストにする
+                close_days = [days_of_week[day] for day in close_days_list]
+                self.logger.debug(f"close_day_str: {close_days}")
+
+
+                # もし２つ以上の定休日があった場合、結合する
+                if len(close_days) > 1:
+                    close_days = ', '.join(close_days)
+                    self.logger.debug(f"close_days: {close_days}")
+
+                self.logger.info(f"******** get_close_day 開始 ********")
+
+                return close_days
+
+            else:
+                raise ValueError("list_data が None")
+
+
+        except ValueError as ve:
+            self.logger.error(f"list_data が None: {ve}")
+
+        except Exception as e:
+            self.logger.error(f"get_close_day 処理中にエラーが発生: {e}")
+
+
 # ----------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------
