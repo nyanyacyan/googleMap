@@ -100,12 +100,21 @@ class Test:
 
 
 
+<<<<<<< HEAD
 # TODO DataFrameに追加するもの
 # TODO 都道府県を追加
 # TODO 市区町村を追加
 # TODO 町名を追加
 # TODO  写真のリンク先
 # TODO  レビューを追加（1から5までの3項目）
+=======
+
+# TODO DataFrameに余計なcolumnを削除する
+# TODO レビューをパターン化させる→レビューのｄｆを作るべきかを確認
+# TODO 
+# TODO 
+# TODO 
+>>>>>>> 5b608d501bd043f0534796b921845120d36cb807
 
 
 

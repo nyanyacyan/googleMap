@@ -821,35 +821,44 @@ class GoogleMapBase:
 
 
 # ----------------------------------------------------------------------------------
-# DataFrameを並び替える
+# jsonファイルからデータを取得
 
-    def df_sort(self, df, new_order):
+    def _get_json_data(self, select_series, none_res_data):
         try:
-            self.logger.info(f"******** df_sort 開始 ********")
+            self.logger.info(f"******** get_json_data 終了 ********")
 
-            self.logger.debug(f"df: \n{df.head(3)}")
-            self.logger.debug(f"new_order: {new_order}")
+            self.logger.debug(select_series.head(3))
 
-            if not df.empty:
-                if all(col in df.columns for col in new_order):
-                    sorted_df = df[new_order]
+            if isinstance(select_series, pd.Series):
 
-                else:
-                    raise ValueError("new_orderで指定してるcolumnがDataFrameに存在しない")
+                json_data_list = []
+                for data in select_series:
+                    if pd.isna(data):
 
-            sorted_df.to_csv('installer/result_output/sorted_df.csv')
+                        # データがない場合のリンク
+                        none_res = none_res_data
 
-            self.logger.warning(f"df: \n{sorted_df.head(3)}")
+                        # noneのときにいれるデータを追加する
+                        json_data_list.append(none_res)
 
-            self.logger.info(f"******** df_sort 終了 ********")
+                    else:
+                        # json形式からpythonデータへ変換
+                        # ダブルコーテへ変換する（シングルコーテはjson.loadsに対応してないため）
+                        json_to_data = json.loads(data.replace("'", "\""))
+                        json_data_list.append(json_to_data)
 
-            return sorted_df
+            self.logger.warning(f"json_data_list: \n{json_data_list}")
 
-        except ValueError as ve:
-            self.logger.error(f"new_orderで指定してるcolumnがDataFrameに存在しない: {ve}")
+            self.logger.info(f"******** get_json_data 終了 ********")
+
+            return json_data_list
+
+        except json.JSONDecodeError as json_err:
+            self.logger.error(f"JSONDecodeError 処理中にエラーが発生: {json_err}")
 
         except Exception as e:
-            self.logger.error(f"df_sort 処理中にエラーが発生: {e}")
+            self.logger.error(f"get_json_data 処理中にエラーが発生: {e}")
+
 
 
 # ----------------------------------------------------------------------------------
