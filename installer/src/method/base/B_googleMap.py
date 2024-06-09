@@ -821,6 +821,45 @@ class GoogleMapBase:
 
 
 # ----------------------------------------------------------------------------------
+# jsonファイルからデータを取得
+
+    def _get_json_data(self, select_series, none_res_data):
+        try:
+            self.logger.info(f"******** get_json_data 終了 ********")
+
+            self.logger.debug(select_series.head(3))
+
+            if isinstance(select_series, pd.Series):
+
+                json_data_list = []
+                for data in select_series:
+                    if pd.isna(data):
+
+                        # データがない場合のリンク
+                        none_res = none_res_data
+
+                        # noneのときにいれるデータを追加する
+                        json_data_list.append(none_res)
+
+                    else:
+                        # json形式からpythonデータへ変換
+                        # ダブルコーテへ変換する（シングルコーテはjson.loadsに対応してないため）
+                        json_to_data = json.loads(data.replace("'", "\""))
+                        json_data_list.append(json_to_data)
+
+            self.logger.warning(f"json_data_list: \n{json_data_list}")
+
+            self.logger.info(f"******** get_json_data 終了 ********")
+
+            return json_data_list
+
+        except json.JSONDecodeError as json_err:
+            self.logger.error(f"JSONDecodeError 処理中にエラーが発生: {json_err}")
+
+        except Exception as e:
+            self.logger.error(f"get_json_data 処理中にエラーが発生: {e}")
+
+
 
 # ----------------------------------------------------------------------------------
 

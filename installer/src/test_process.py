@@ -69,7 +69,7 @@ class Test:
 
 
 # TODO DataFrameに余計なcolumnを削除する
-# TODO 
+# TODO レビューをパターン化させる→レビューのｄｆを作るべきかを確認
 # TODO 
 # TODO 
 # TODO 
