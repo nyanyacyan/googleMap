@@ -41,7 +41,7 @@ class Test:
         )
 
         # 住所
-        add_jpanese_address = self.df_merge.process(
+        add_japanese_address = self.df_merge.process(
             key_df = key_df,
             column = 'formatted_address',
             add_func = self.gm_geocoding._address_to_japanese,
@@ -50,7 +50,7 @@ class Test:
 
         # 営業時間
         add_business_hours =self.df_merge.process(
-            key_df = add_jpanese_address,  # 更新したDataFrameを入れる
+            key_df = add_japanese_address,  # 更新したDataFrameを入れる
             column = 'opening_hours.periods',
             add_func = self.gm_geocoding.get_business_hour,
             new_column = 'business_hours'
@@ -64,12 +64,23 @@ class Test:
             new_column = 'close_days'
         )
 
+        # 必要な情報に絞り込み
+        sorted_df = self.gm_geocoding.df_sort(
+            df=Last_df,
+            new_order=['name', 'photos', 'geometry.viewport.northeast.lat', 'geometry.viewport.northeast.lng', 'geometry.viewport.southwest.lat', 'geometry.viewport.southwest.lng', 'japanese_address', 'formatted_phone_number', 'business_hours', 'close_days', 'url', 'reviews']
+        )
 
-        return Last_df
+
+        return sorted_df
 
 
+
+<<<<<<< HEAD
 # TODO DataFrameに余計なcolumnを削除する
 # TODO レビューをパターン化させる→レビューのｄｆを作るべきかを確認
+=======
+# TODO 
+>>>>>>> 355454fb0ead551d8d5fb585ab9d605d4a075466
 # TODO 
 # TODO 
 # TODO 
