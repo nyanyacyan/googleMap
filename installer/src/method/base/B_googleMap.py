@@ -853,6 +853,138 @@ class GoogleMapBase:
 
 
 # ----------------------------------------------------------------------------------
+# addressからデータを抜く基本のメソッド
+
+    def _get_address_data(self, cell_data, address_type):
+        try:
+            self.logger.info(f"******** _get_address_data start ********")
+
+            self.logger.debug(f"cell_data: {cell_data}, address_type: {address_type}")
+
+
+            for address_dict_data in cell_data:
+                self.logger.debug(f"address_dict_data:\n{address_dict_data}")
+
+                if not isinstance(address_dict_data, dict):
+                    self.logger.error(f"{address_dict_data} が期待してるデータではない")
+                    raise TypeError(f"辞書データではない: {type(address_dict_data)}")
+
+                if 'types' in address_dict_data and address_type in address_dict_data['types']:
+                    address_data = address_dict_data['long_name']
+
+                    self.logger.info(f"address_data: {address_data}")
+
+                    self.logger.info(f"********  _get_address_data end ********")
+
+                    return address_data
+
+
+        except ValueError as ve:
+            self.logger.error(f"_get_address_data 期待してる値ではない: {ve}")
+
+        except TypeError as te:
+            self.logger.error(f"_get_address_data 期待してるデータ型ではない: {te}")
+
+        except Exception as e:
+            self.logger.error(f"_get_address_data 処理中にエラーが発生: {e}")
+
+
+# ----------------------------------------------------------------------------------
+# TODO 都道府県を追加
+
+    def _get_prefectures(self, cell_data):
+        try:
+            self.logger.info(f"******** _get_prefectures start ********")
+
+            prefectures_name = self._get_address_data(cell_data=cell_data, address_type='administrative_area_level_1')
+
+            self.logger.info(f"prefectures_name: {prefectures_name}")
+
+            self.logger.info(f"********  _get_prefectures end ********")
+
+            return prefectures_name
+
+        except Exception as e:
+            self.logger.error(f"_get_prefectures 処理中にエラーが発生: {e}")
+
+
+# ----------------------------------------------------------------------------------
+# TODO 市区町村を追加
+
+    def _get_locality(self, cell_data):
+        try:
+            self.logger.info(f"******** _get_locality start ********")
+
+            locality_name = self._get_address_data(cell_data=cell_data, address_type='locality')
+
+            self.logger.info(f"locality_name: {locality_name}")
+
+            self.logger.info(f"********  _get_locality end ********")
+
+            return locality_name
+
+        except Exception as e:
+            self.logger.error(f"_get_locality 処理中にエラーが発生: {e}")
+
+
+# ----------------------------------------------------------------------------------
+# TODO 町名を追加
+
+    def _get_sublocality(self, cell_data):
+        try:
+            self.logger.info(f"******** _get_sublocality start ********")
+
+            sublocality_name = self._get_address_data(cell_data=cell_data, address_type='sublocality_level_2')
+
+            self.logger.info(f"sublocality_name: {sublocality_name}")
+
+            self.logger.info(f"********  _get_sublocality end ********")
+
+            return sublocality_name
+
+        except Exception as e:
+            self.logger.error(f"_get_sublocality 処理中にエラーが発生: {e}")
+
+
+
+
+# ----------------------------------------------------------------------------------
+# TODO  写真のリンク先
+
+    def html_replace(self):
+        try:
+            self.logger.info(f"******** html_replace start ********")
+
+
+
+            self.logger.info(f"********  html_replace end ********")
+
+        except Exception as e:
+            self.logger.error(f"html_replace 処理中にエラーが発生: {e}")
+
+
+
+# ----------------------------------------------------------------------------------
+# TODO  レビューを追加（1から5までの3項目）
+
+    def html_replace(self):
+        try:
+            self.logger.info(f"******** html_replace start ********")
+
+
+
+            self.logger.info(f"********  html_replace end ********")
+
+        except Exception as e:
+            self.logger.error(f"html_replace 処理中にエラーが発生: {e}")
+
+
+
+# ----------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 
 
 
