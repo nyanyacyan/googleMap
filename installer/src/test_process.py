@@ -75,12 +75,9 @@ class Test:
 
 
 
-<<<<<<< HEAD
+
 # TODO DataFrameに余計なcolumnを削除する
 # TODO レビューをパターン化させる→レビューのｄｆを作るべきかを確認
-=======
-# TODO 
->>>>>>> 355454fb0ead551d8d5fb585ab9d605d4a075466
 # TODO 
 # TODO 
 # TODO 
