@@ -997,6 +997,59 @@ class GoogleMapBase:
 
 
 # ----------------------------------------------------------------------------------
+# TODO  緯度と経度の中間を出す
+
+    def _get_navi_position(self, df):
+        try:
+            self.logger.info(f"******** _get_navi_position start ********")
+
+            if not df.empty:
+                self.logger.debug(df.head(3))
+
+                center_lat_lng_list = []
+
+                required_columns =['geometry.viewport.northeast.lat', 'geometry.viewport.northeast.lng', 'geometry.viewport.southwest.lat', 'geometry.viewport.southwest.lng']
+
+                # 必須のcolumnがDataFrameに存在するのを確認
+                if all(column in df.columns for column in required_columns):
+                    for index, row in df.iterrows():
+                        northeast_lat = row['geometry.viewport.northeast.lat']
+                        northeast_lng  = row['geometry.viewport.northeast.lng']
+                        southwest_lat = row['geometry.viewport.southwest.lat']
+                        southwest_lng = row['geometry.viewport.southwest.lng']
+
+                        self.logger.debug(f"northeast_lat: {northeast_lat}")
+                        self.logger.debug(f"northeast_lng: {northeast_lng}")
+                        self.logger.debug(f"southwest_lat: {southwest_lat}")
+                        self.logger.debug(f"southwest_lng: {southwest_lng}")
+
+                        # 北東と南西の位置から中心を割り出す
+                        center_lat = (northeast_lat + southwest_lat) / 2
+                        center_lng = (northeast_lng + southwest_lng) / 2
+
+                        self.logger.warning(f"center_lat: {center_lat}")
+                        self.logger.warning(f"center_lng: {center_lng}")
+
+                        # 辞書データにする
+                        lat_lng_dict = {'center_lat' : center_lat,'center_lng' : center_lng}
+                        center_lat_lng_list.append(lat_lng_dict)
+
+                self.logger.info(f"{index} center_lat_lng_list: {center_lat_lng_list}")
+
+                # 辞書データをDataFrameにする
+                center_lat_lng_df = pd.DataFrame(center_lat_lng_list)
+
+
+                self.logger.info(f"********  _get_navi_position end ********")
+
+                return center_lat_lng_df
+
+        except Exception as e:
+            self.logger.error(f"_get_navi_position 処理中にエラーが発生: {e}")
+
+
+
+# ----------------------------------------------------------------------------------
 # TODO  レビューを追加（1から5までの3項目）
 
     def html_replace(self):
@@ -1011,8 +1064,6 @@ class GoogleMapBase:
             self.logger.error(f"html_replace 処理中にエラーが発生: {e}")
 
 
-
-# ----------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------

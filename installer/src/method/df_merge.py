@@ -31,9 +31,12 @@ class DfProcessMerge(GoogleMapBase):
     def _get_column_data(self, key_df, column):
         return super()._get_column_data(key_df, column)
 
-    #TODO 処理
+    # 処理
     def add_process_value_in_list(self, list_data, add_func):
         return super().add_process_value_in_list(list_data, add_func)
+
+    def _get_navi_position(self, df):
+        return super()._get_navi_position(df)
 
 
     def get_reviews(self, list_data):
@@ -90,23 +93,12 @@ class DfProcessMerge(GoogleMapBase):
 # 既存のDataFrameから指定のcolumnの値を取得
 # →各値に処理を加える→SeriesをDataFrameにして結合
 
-    def process2(self, key_df, column, new_column):
+    def process2(self, key_df):
         try:
             self.logger.info(f"******** DfProcessMerge 開始 ********")
 
             # 特定のcolumnのデータを取得
-            list_data =self._get_column_data(key_df, column)
-            self.logger.debug(f"list_data: {list_data}")
-            time.sleep(2)
-
-            self.logger.warning(type(list_data))
-
-            # columnの値、それぞれに処理を加えてリストにする
-            fixed_data = self.get_reviews(list_data=list_data)
-            time.sleep(2)
-
-            # リストをDataFrameにする
-            add_df = self._to_df(fixed_data, new_column=new_column)
+            add_df =self._get_navi_position(df=key_df)
             time.sleep(2)
 
             # DataFrameを結合させる
@@ -121,3 +113,6 @@ class DfProcessMerge(GoogleMapBase):
 
         except Exception as e:
             self.logger.error(f"DfProcessMerge 処理中にエラーが発生: {e}")
+
+
+# ----------------------------------------------------------------------------------

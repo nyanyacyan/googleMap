@@ -96,15 +96,18 @@ class Test:
             new_column = 'photo_link'
         )
 
-
+        # nave_position
+        add_nave_position_df =self.df_merge.process2(
+            key_df = add_photo_link_df,  # 更新したDataFrameを入れる
+        )
         # 必要な情報に絞り込み
         # sorted_df = self.gm_geocoding.df_sort(
         #     df=Last_df,
-        #     new_order=['name', 'photos', 'geometry.viewport.northeast.lat', 'geometry.viewport.northeast.lng', 'geometry.viewport.southwest.lat', 'geometry.viewport.southwest.lng', 'japanese_address', 'formatted_phone_number', 'business_hours', 'close_days', 'url', 'reviews', 'prefectures', 'locality', 'sublocality', 'photo_link']
+        #     new_order=['name', 'photos', 'geometry.viewport.northeast.lat', 'geometry.viewport.northeast.lng', 'geometry.viewport.southwest.lat', 'geometry.viewport.southwest.lng', 'japanese_address', 'formatted_phone_number', 'business_hours', 'close_days', 'url', 'reviews', 'prefectures', 'locality', 'sublocality', 'photo_link','center_lat', 'center_lng']
         # )
 
 
-        return add_photo_link_df
+        return add_nave_position_df
 
 
 
