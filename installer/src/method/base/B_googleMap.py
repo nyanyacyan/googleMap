@@ -899,7 +899,7 @@ class GoogleMapBase:
 
 
 # ----------------------------------------------------------------------------------
-# TODO 都道府県を追加
+#  都道府県を追加
 
     def _get_prefectures(self, cell_data):
         try:
@@ -918,7 +918,7 @@ class GoogleMapBase:
 
 
 # ----------------------------------------------------------------------------------
-# TODO 市区町村を追加
+#  市区町村を追加
 
     def _get_locality(self, cell_data):
         try:
@@ -937,7 +937,7 @@ class GoogleMapBase:
 
 
 # ----------------------------------------------------------------------------------
-# TODO 町名を追加
+#  町名を追加
 
     def _get_sublocality(self, cell_data):
         try:
@@ -958,19 +958,42 @@ class GoogleMapBase:
 
 
 # ----------------------------------------------------------------------------------
-# TODO  写真のリンク先
+#   写真のリンク先
 
-    def html_replace(self):
+    def _get_photo_link(self, cell_data):
         try:
-            self.logger.info(f"******** html_replace start ********")
+            self.logger.info(f"******** _get_photo_link start ********")
 
+            self.logger.debug(f"cell_data: {cell_data}")
 
+            # 空の場合（NaN）の場合
+            if cell_data is None or (isinstance(cell_data, float) and math.isnan(cell_data)):
+                self.logger.warning(f"{cell_data} が None")
+                return "GoogleMapには写真の掲載なし"
 
-            self.logger.info(f"********  html_replace end ********")
+            # 写真データの最初の画像を使用
+            if isinstance(cell_data, list) and len(cell_data) > 0:
+                first_photo = cell_data[0]
+
+                # 最初のリンクを使用
+                if 'html_attributions' in first_photo and isinstance(first_photo['html_attributions'], list) and len(first_photo['html_attributions']) > 0:
+                    photo_link = first_photo['html_attributions'][0]
+
+                    self.logger.info(f"photo_link: {photo_link}")
+
+                    self.logger.info(f"********  _get_photo_link end ********")
+
+                    return photo_link
+
+            self.logger.warning(f"適切な写真が見つかりませんでした。")
+
+            self.logger.info(f"********  _get_photo_link end ********")
+
+            return"GoogleMapには写真の掲載なし"
+
 
         except Exception as e:
-            self.logger.error(f"html_replace 処理中にエラーが発生: {e}")
-
+            self.logger.error(f"_get_photo_link 処理中にエラーが発生: {e}")
 
 
 # ----------------------------------------------------------------------------------

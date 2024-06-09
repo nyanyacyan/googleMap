@@ -88,33 +88,42 @@ class Test:
             new_column = 'sublocality'
         )
 
+        # photo_link
+        add_photo_link_df =self.df_merge.process(
+            key_df = add_sublocality_df,  # 更新したDataFrameを入れる
+            column = 'photos',
+            add_func = self.gm_geocoding._get_photo_link,
+            new_column = 'photo_link'
+        )
+
 
         # 必要な情報に絞り込み
         # sorted_df = self.gm_geocoding.df_sort(
         #     df=Last_df,
-        #     new_order=['name', 'photos', 'geometry.viewport.northeast.lat', 'geometry.viewport.northeast.lng', 'geometry.viewport.southwest.lat', 'geometry.viewport.southwest.lng', 'japanese_address', 'formatted_phone_number', 'business_hours', 'close_days', 'url', 'reviews']
+        #     new_order=['name', 'photos', 'geometry.viewport.northeast.lat', 'geometry.viewport.northeast.lng', 'geometry.viewport.southwest.lat', 'geometry.viewport.southwest.lng', 'japanese_address', 'formatted_phone_number', 'business_hours', 'close_days', 'url', 'reviews', 'prefectures', 'locality', 'sublocality', 'photo_link']
         # )
 
 
-        return add_sublocality_df
+        return add_photo_link_df
 
 
 
-<<<<<<< HEAD
-# TODO DataFrameに追加するもの
-# TODO 都道府県を追加
-# TODO 市区町村を追加
-# TODO 町名を追加
-# TODO  写真のリンク先
+
+#  DataFrameに追加するもの
+#  都道府県を追加
+#  市区町村を追加
+#  町名を追加
+#   写真のリンク先
+# TODO 緯度と経度の中間を出す
 # TODO  レビューを追加（1から5までの3項目）
-=======
+
 
 # TODO DataFrameに余計なcolumnを削除する
 # TODO レビューをパターン化させる→レビューのｄｆを作るべきかを確認
 # TODO 
 # TODO 
 # TODO 
->>>>>>> 5b608d501bd043f0534796b921845120d36cb807
+
 
 
 
