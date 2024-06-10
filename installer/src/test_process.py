@@ -57,23 +57,79 @@ class Test:
         )
 
         # 定休日
-        Last_df =self.df_merge.process(
+        add_close_days_df =self.df_merge.process(
             key_df = add_business_hours,  # 更新したDataFrameを入れる
             column = 'opening_hours.periods',
             add_func = self.gm_geocoding.get_close_days,
             new_column = 'close_days'
         )
 
-        # 必要な情報に絞り込み
-        sorted_df = self.gm_geocoding.df_sort(
-            df=Last_df,
-            new_order=['name', 'photos', 'geometry.viewport.northeast.lat', 'geometry.viewport.northeast.lng', 'geometry.viewport.southwest.lat', 'geometry.viewport.southwest.lng', 'japanese_address', 'formatted_phone_number', 'business_hours', 'close_days', 'url', 'reviews']
+        # 都道府県
+        add_prefectures_df =self.df_merge.process(
+            key_df = add_close_days_df,  # 更新したDataFrameを入れる
+            column = 'address_components',
+            add_func = self.gm_geocoding._get_prefectures,
+            new_column = 'prefectures'
+        )
+
+        # 市区町村
+        add_locality_df =self.df_merge.process(
+            key_df = add_prefectures_df,  # 更新したDataFrameを入れる
+            column = 'address_components',
+            add_func = self.gm_geocoding._get_locality,
+            new_column = 'locality'
+        )
+
+        # 町名
+        add_sublocality_df =self.df_merge.process(
+            key_df = add_locality_df,  # 更新したDataFrameを入れる
+            column = 'address_components',
+            add_func = self.gm_geocoding._get_sublocality,
+            new_column = 'sublocality'
+        )
+
+        # photo_link
+        add_photo_link_df =self.df_merge.process(
+            key_df = add_sublocality_df,  # 更新したDataFrameを入れる
+            column = 'photos',
+            add_func = self.gm_geocoding._get_photo_link,
+            new_column = 'photo_link'
+        )
+
+        # nave_position
+        add_nave_position_df =self.df_merge.process2(
+            key_df = add_photo_link_df,  # 更新したDataFrameを入れる
+        )
+
+        # review_1
+        add_review_df =self.df_merge.review_merge_process(
+            key_df = add_sublocality_df,  # 更新したDataFrameを入れる
+            column = 'reviews',
+            add_func = self.gm_geocoding._sort_reviews_to_df,
         )
 
 
-        return sorted_df
 
 
+        # 必要な情報に絞り込み
+        # sorted_df = self.gm_geocoding.df_sort(
+        #     df=Last_df,
+        #     new_order=['name', 'photos', 'geometry.viewport.northeast.lat', 'geometry.viewport.northeast.lng', 'geometry.viewport.southwest.lat', 'geometry.viewport.southwest.lng', 'japanese_address', 'formatted_phone_number', 'business_hours', 'close_days', 'url', 'reviews', 'prefectures', 'locality', 'sublocality', 'photo_link','center_lat', 'center_lng']
+        # )
+
+
+        return add_review_df
+
+
+
+
+#  DataFrameに追加するもの
+#  都道府県を追加
+#  市区町村を追加
+#  町名を追加
+#   写真のリンク先
+#  緯度と経度の中間を出す
+# TODO  レビューを追加（1から5までの3項目）
 
 
 # TODO DataFrameに余計なcolumnを削除する
@@ -81,6 +137,7 @@ class Test:
 # TODO 
 # TODO 
 # TODO 
+
 
 
 

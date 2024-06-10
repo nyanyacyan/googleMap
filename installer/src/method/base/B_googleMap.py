@@ -588,7 +588,43 @@ class GoogleMapBase:
 
 
 # ----------------------------------------------------------------------------------
-# 営業時間を抽出
+# 各リストに処理を当て込めていく
+
+    def review_add_process_value_in_list(self, list_data, add_func):
+        try:
+            self.logger.info(f"******** review_add_process_value_in_list 開始 ********")
+
+            self.logger.debug(f"list_data: \n{list_data}")
+
+            original_data_list = []
+
+            # 値に処理を加えてリストにまとめる
+            for data in list_data:
+                # もしデータがない場合には追記する
+                if data is None or (isinstance(data, float) and math.isnan(data)):
+                    self.logger.info(f"dataがNone")
+
+                else:
+                    original_data = add_func(data)
+                    self.logger.warning(f"original_data: {original_data}")
+
+                    # もしリストのデータだったら結合させてリストに追加
+                    if isinstance(original_data, list):
+                        original_data_list.append("\n".join(original_data))
+                    else:
+                        original_data_list.append(original_data)
+
+            self.logger.warning(f"original_data_list: {original_data_list}")
+
+            self.logger.info(f"******** review_add_process_value_in_list 終了 ********")
+
+            return original_data_list
+
+        except Exception as e:
+            self.logger.error(f"review_add_process_value_in_list 処理中にエラーが発生: {e}")
+
+
+# ----------------------------------------------------------------------------------# 営業時間を抽出
 
     def get_business_hour(self, list_data):
         try:
@@ -862,7 +898,261 @@ class GoogleMapBase:
 
 
 # ----------------------------------------------------------------------------------
+<<<<<<< HEAD
 # 辞書データから抽出してリストにする
+=======
+# addressからデータを抜く基本のメソッド
+
+    def _get_address_data(self, cell_data, address_type):
+        try:
+            self.logger.info(f"******** _get_address_data start ********")
+
+            self.logger.debug(f"cell_data: {cell_data}, address_type: {address_type}")
+
+
+            for address_dict_data in cell_data:
+                self.logger.debug(f"address_dict_data:\n{address_dict_data}")
+
+                if not isinstance(address_dict_data, dict):
+                    self.logger.error(f"{address_dict_data} が期待してるデータではない")
+                    raise TypeError(f"辞書データではない: {type(address_dict_data)}")
+
+                if 'types' in address_dict_data and address_type in address_dict_data['types']:
+                    address_data = address_dict_data['long_name']
+
+                    self.logger.info(f"address_data: {address_data}")
+
+                    self.logger.info(f"********  _get_address_data end ********")
+
+                    return address_data
+
+
+        except ValueError as ve:
+            self.logger.error(f"_get_address_data 期待してる値ではない: {ve}")
+
+        except TypeError as te:
+            self.logger.error(f"_get_address_data 期待してるデータ型ではない: {te}")
+
+        except Exception as e:
+            self.logger.error(f"_get_address_data 処理中にエラーが発生: {e}")
+
+
+# ----------------------------------------------------------------------------------
+#  都道府県を追加
+
+    def _get_prefectures(self, cell_data):
+        try:
+            self.logger.info(f"******** _get_prefectures start ********")
+
+            prefectures_name = self._get_address_data(cell_data=cell_data, address_type='administrative_area_level_1')
+
+            self.logger.info(f"prefectures_name: {prefectures_name}")
+
+            self.logger.info(f"********  _get_prefectures end ********")
+
+            return prefectures_name
+
+        except Exception as e:
+            self.logger.error(f"_get_prefectures 処理中にエラーが発生: {e}")
+
+
+# ----------------------------------------------------------------------------------
+#  市区町村を追加
+
+    def _get_locality(self, cell_data):
+        try:
+            self.logger.info(f"******** _get_locality start ********")
+
+            locality_name = self._get_address_data(cell_data=cell_data, address_type='locality')
+
+            self.logger.info(f"locality_name: {locality_name}")
+
+            self.logger.info(f"********  _get_locality end ********")
+
+            return locality_name
+
+        except Exception as e:
+            self.logger.error(f"_get_locality 処理中にエラーが発生: {e}")
+
+
+# ----------------------------------------------------------------------------------
+#  町名を追加
+
+    def _get_sublocality(self, cell_data):
+        try:
+            self.logger.info(f"******** _get_sublocality start ********")
+
+            sublocality_name = self._get_address_data(cell_data=cell_data, address_type='sublocality_level_2')
+
+            self.logger.info(f"sublocality_name: {sublocality_name}")
+
+            self.logger.info(f"********  _get_sublocality end ********")
+
+            return sublocality_name
+
+        except Exception as e:
+            self.logger.error(f"_get_sublocality 処理中にエラーが発生: {e}")
+
+
+
+
+# ----------------------------------------------------------------------------------
+#   写真のリンク先
+
+    def _get_photo_link(self, cell_data):
+        try:
+            self.logger.info(f"******** _get_photo_link start ********")
+
+            self.logger.debug(f"cell_data: {cell_data}")
+
+            # 空の場合（NaN）の場合
+            if cell_data is None or (isinstance(cell_data, float) and math.isnan(cell_data)):
+                self.logger.warning(f"{cell_data} が None")
+                return "GoogleMapには写真の掲載なし"
+
+            # 写真データの最初の画像を使用
+            if isinstance(cell_data, list) and len(cell_data) > 0:
+                first_photo = cell_data[0]
+
+                # 最初のリンクを使用
+                if 'html_attributions' in first_photo and isinstance(first_photo['html_attributions'], list) and len(first_photo['html_attributions']) > 0:
+                    photo_link = first_photo['html_attributions'][0]
+
+                    self.logger.info(f"photo_link: {photo_link}")
+
+                    self.logger.info(f"********  _get_photo_link end ********")
+
+                    return photo_link
+
+            self.logger.warning(f"適切な写真が見つかりませんでした。")
+
+            self.logger.info(f"********  _get_photo_link end ********")
+
+            return"GoogleMapには写真の掲載なし"
+
+
+        except Exception as e:
+            self.logger.error(f"_get_photo_link 処理中にエラーが発生: {e}")
+
+
+# ----------------------------------------------------------------------------------
+# TODO  緯度と経度の中間を出す
+
+    def _get_navi_position(self, df):
+        try:
+            self.logger.info(f"******** _get_navi_position start ********")
+
+            if not df.empty:
+                self.logger.debug(df.head(3))
+
+                center_lat_lng_list = []
+
+                required_columns =['geometry.viewport.northeast.lat', 'geometry.viewport.northeast.lng', 'geometry.viewport.southwest.lat', 'geometry.viewport.southwest.lng']
+
+                # 必須のcolumnがDataFrameに存在するのを確認
+                if all(column in df.columns for column in required_columns):
+                    for index, row in df.iterrows():
+                        northeast_lat = row['geometry.viewport.northeast.lat']
+                        northeast_lng  = row['geometry.viewport.northeast.lng']
+                        southwest_lat = row['geometry.viewport.southwest.lat']
+                        southwest_lng = row['geometry.viewport.southwest.lng']
+
+                        self.logger.debug(f"northeast_lat: {northeast_lat}")
+                        self.logger.debug(f"northeast_lng: {northeast_lng}")
+                        self.logger.debug(f"southwest_lat: {southwest_lat}")
+                        self.logger.debug(f"southwest_lng: {southwest_lng}")
+
+                        # 北東と南西の位置から中心を割り出す
+                        center_lat = (northeast_lat + southwest_lat) / 2
+                        center_lng = (northeast_lng + southwest_lng) / 2
+
+                        self.logger.warning(f"center_lat: {center_lat}")
+                        self.logger.warning(f"center_lng: {center_lng}")
+
+                        # 辞書データにする
+                        lat_lng_dict = {'center_lat' : center_lat,'center_lng' : center_lng}
+                        center_lat_lng_list.append(lat_lng_dict)
+
+                self.logger.info(f"{index} center_lat_lng_list: {center_lat_lng_list}")
+
+                # 辞書データをDataFrameにする
+                center_lat_lng_df = pd.DataFrame(center_lat_lng_list)
+
+
+                self.logger.info(f"********  _get_navi_position end ********")
+
+                return center_lat_lng_df
+
+        except Exception as e:
+            self.logger.error(f"_get_navi_position 処理中にエラーが発生: {e}")
+
+
+
+# ----------------------------------------------------------------------------------
+# TODO  レビューをソートして
+
+    def _sort_reviews_to_df(self, cell_data):
+        try:
+            self.logger.info(f"******** _sort_reviews_to_df start ********")
+
+            self.logger.debug(f"cell_data: {cell_data}")
+
+            # 空の場合（NaN）の場合
+            if cell_data is None or (isinstance(cell_data, float) and math.isnan(cell_data)):
+                self.logger.warning(f"{cell_data} が None")
+                return 'レビューデータがありません。'
+
+            # 'rating'にて降順にsort
+            sorted_rating = sorted(cell_data, key=lambda x: x['rating'], reverse=True)
+
+            self.logger.debug(f"sorted_rating: {sorted_rating}")
+
+            # 辞書を作成する（Column名のケツに1を足していく）
+            # 辞書を作る→DataFrameにした際にはKeyがColumnになる
+            # 空のDataFrameを作成する際には全てに[None]を入れる
+            review_columns = {f'review{ i + 1 }_rating' : None for i in range(5)}
+
+            # .updateは追記するということ
+            review_columns.update({f'review{ i + 1 }_name' : None for i in range(5)})
+            review_columns.update({f'review{ i + 1 }_text' : None for i in range(5)})
+
+            self.logger.debug(f"review_columns: {review_columns}")
+
+            # Columnの名称（順位）にそれぞれの値を埋め込んでいく
+            # 作られたColumnに順位別に横に埋め込んでいく感じ
+            # 辞書の値を追加する際には基本は代入
+            for i, review in enumerate(sorted_rating):
+                review_columns[f'review{ i + 1}_rating'][0] = review['rating']
+                review_columns[f'review{ i + 1}_name'][0] = review['author_name']
+                review_columns[f'review{ i + 1}_text'][0] = review['text']
+
+            # review_df = pd.DataFrame(review_columns)
+
+            # if not isinstance(review_df, pd.DataFrame):
+            #     raise TypeError(f"DataFrameになっていない\n{type(review_df)}")
+
+            # self.logger.info(f"review_df: \n{review_df.head(3)}")
+
+            # review_df.to_csv('installer/result_output/review_df.csv')
+
+            self.logger.warning(f"review_columns: {review_columns}")
+
+
+            self.logger.info(f"********  _sort_reviews_to_df end ********")
+
+            return review_columns
+
+
+        except Exception as e:
+            self.logger.error(f"_sort_reviews_to_df 処理中にエラーが発生: {e}")
+            raise
+
+
+# ----------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
+>>>>>>> 5be5a95aeed3ed1b923dfc002d4ef9b37fbdffc3
 
     def _dict_to_list(self, dict_data):
         try:
@@ -912,13 +1202,11 @@ class GoogleMapBase:
             #! 変換しなければならない箇所
             # 住所→formatted_addressをGoogle Maps Geocoding APIを使うことで日本語変換する→dfにして結合
 
-            #TODO 営業時間
-            #TODO 定休日
 
             #TODO レビュ→profile_photo_url, author_name, rating, text, →それぞれの項目を作成なし（-）
 
             #TODO 写真→ありなし
-            #TODO website→ありなし
+
 
 
 
