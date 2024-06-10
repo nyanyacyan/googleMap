@@ -842,7 +842,7 @@ class GoogleMapBase:
                         json_data_list.append(none_res)
 
                     else:
-                        # json形式からpythonデータへ変換
+                        # json形式から辞書形式へ変換
                         # ダブルコーテへ変換する（シングルコーテはjson.loadsに対応してないため）
                         json_to_data = json.loads(data.replace("'", "\""))
                         json_data_list.append(json_to_data)
@@ -862,7 +862,18 @@ class GoogleMapBase:
 
 
 # ----------------------------------------------------------------------------------
+# 辞書データから抽出してリストにする
 
+    def _dict_to_list(self, dict_data):
+        try:
+            self.logger.info(f"******** _dict_to_list 終了 ********")
+
+            self.logger.debug(f"dict_data: {dict_data}")
+
+            self.logger.info(f"******** _dict_to_list 終了 ********")
+
+        except Exception as e:
+            self.logger.error(f"_dict_to_list 処理中にエラーが発生: {e}")
 
 
 # ----------------------------------------------------------------------------------
