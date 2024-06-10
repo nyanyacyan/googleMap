@@ -4,6 +4,7 @@
 
 # ----------------------------------------------------------------------------------
 import time
+import pandas as pd
 import const
 import requests
 
@@ -53,6 +54,9 @@ class DfProcessMerge(GoogleMapBase):
         return super()._df_marge(key_df, add_df)
 
 
+    def review_add_process_value_in_list(self, list_data, add_func):
+        return super().review_add_process_value_in_list(list_data, add_func)
+
 
 # ----------------------------------------------------------------------------------
 # 既存のDataFrameから指定のcolumnの値を取得
@@ -90,8 +94,7 @@ class DfProcessMerge(GoogleMapBase):
 
 
 # ----------------------------------------------------------------------------------
-# 既存のDataFrameから指定のcolumnの値を取得
-# →各値に処理を加える→SeriesをDataFrameにして結合
+# DataFrameから直接結合
 
     def process2(self, key_df):
         try:
@@ -113,6 +116,38 @@ class DfProcessMerge(GoogleMapBase):
 
         except Exception as e:
             self.logger.error(f"DfProcessMerge 処理中にエラーが発生: {e}")
+
+
+# ----------------------------------------------------------------------------------
+
+
+    def review_merge_process(self, key_df, column, add_func):
+        try:
+            self.logger.info(f"******** review_merge_process 開始 ********")
+
+            # 特定のcolumnのデータを取得
+            list_data =self._get_column_data(key_df, column)
+            self.logger.debug(f"list_data: {list_data}")
+            time.sleep(2)
+
+            # columnの値、それぞれに処理を加えてリストにする
+            list_data = self.review_add_process_value_in_list(list_data=list_data, add_func=add_func)
+            time.sleep(2)
+
+            add_df = pd.DataFrame(list_data)
+
+            # DataFrameを結合させる
+            new_df = self._df_marge(key_df=key_df, add_df=add_df)
+            time.sleep(2)
+
+            self.logger.info(f"******** review_merge_process 終了 ********")
+
+            new_df.to_csv('installer/result_output/merge_df.csv')
+
+            return new_df
+
+        except Exception as e:
+            self.logger.error(f"review_merge_process 処理中にエラーが発生: {e}")
 
 
 # ----------------------------------------------------------------------------------

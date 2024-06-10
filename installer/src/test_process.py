@@ -100,6 +100,17 @@ class Test:
         add_nave_position_df =self.df_merge.process2(
             key_df = add_photo_link_df,  # 更新したDataFrameを入れる
         )
+
+        # review_1
+        add_review_df =self.df_merge.review_merge_process(
+            key_df = add_sublocality_df,  # 更新したDataFrameを入れる
+            column = 'reviews',
+            add_func = self.gm_geocoding._sort_reviews_to_df,
+        )
+
+
+
+
         # 必要な情報に絞り込み
         # sorted_df = self.gm_geocoding.df_sort(
         #     df=Last_df,
@@ -107,7 +118,7 @@ class Test:
         # )
 
 
-        return add_nave_position_df
+        return add_review_df
 
 
 
@@ -117,7 +128,7 @@ class Test:
 #  市区町村を追加
 #  町名を追加
 #   写真のリンク先
-# TODO 緯度と経度の中間を出す
+#  緯度と経度の中間を出す
 # TODO  レビューを追加（1から5までの3項目）
 
 

@@ -588,7 +588,43 @@ class GoogleMapBase:
 
 
 # ----------------------------------------------------------------------------------
-# 営業時間を抽出
+# 各リストに処理を当て込めていく
+
+    def review_add_process_value_in_list(self, list_data, add_func):
+        try:
+            self.logger.info(f"******** review_add_process_value_in_list 開始 ********")
+
+            self.logger.debug(f"list_data: \n{list_data}")
+
+            original_data_list = []
+
+            # 値に処理を加えてリストにまとめる
+            for data in list_data:
+                # もしデータがない場合には追記する
+                if data is None or (isinstance(data, float) and math.isnan(data)):
+                    self.logger.info(f"dataがNone")
+
+                else:
+                    original_data = add_func(data)
+                    self.logger.warning(f"original_data: {original_data}")
+
+                    # もしリストのデータだったら結合させてリストに追加
+                    if isinstance(original_data, list):
+                        original_data_list.append("\n".join(original_data))
+                    else:
+                        original_data_list.append(original_data)
+
+            self.logger.warning(f"original_data_list: {original_data_list}")
+
+            self.logger.info(f"******** review_add_process_value_in_list 終了 ********")
+
+            return original_data_list
+
+        except Exception as e:
+            self.logger.error(f"review_add_process_value_in_list 処理中にエラーが発生: {e}")
+
+
+# ----------------------------------------------------------------------------------# 営業時間を抽出
 
     def get_business_hour(self, list_data):
         try:
@@ -1050,18 +1086,63 @@ class GoogleMapBase:
 
 
 # ----------------------------------------------------------------------------------
-# TODO  レビューを追加（1から5までの3項目）
+# TODO  レビューをソートして
 
-    def html_replace(self):
+    def _sort_reviews_to_df(self, cell_data):
         try:
-            self.logger.info(f"******** html_replace start ********")
+            self.logger.info(f"******** _sort_reviews_to_df start ********")
+
+            self.logger.debug(f"cell_data: {cell_data}")
+
+            # 空の場合（NaN）の場合
+            if cell_data is None or (isinstance(cell_data, float) and math.isnan(cell_data)):
+                self.logger.warning(f"{cell_data} が None")
+                return 'レビューデータがありません。'
+
+            # 'rating'にて降順にsort
+            sorted_rating = sorted(cell_data, key=lambda x: x['rating'], reverse=True)
+
+            self.logger.debug(f"sorted_rating: {sorted_rating}")
+
+            # 辞書を作成する（Column名のケツに1を足していく）
+            # 辞書を作る→DataFrameにした際にはKeyがColumnになる
+            # 空のDataFrameを作成する際には全てに[None]を入れる
+            review_columns = {f'review{ i + 1 }_rating' : None for i in range(5)}
+
+            # .updateは追記するということ
+            review_columns.update({f'review{ i + 1 }_name' : None for i in range(5)})
+            review_columns.update({f'review{ i + 1 }_text' : None for i in range(5)})
+
+            self.logger.debug(f"review_columns: {review_columns}")
+
+            # Columnの名称（順位）にそれぞれの値を埋め込んでいく
+            # 作られたColumnに順位別に横に埋め込んでいく感じ
+            # 辞書の値を追加する際には基本は代入
+            for i, review in enumerate(sorted_rating):
+                review_columns[f'review{ i + 1}_rating'][0] = review['rating']
+                review_columns[f'review{ i + 1}_name'][0] = review['author_name']
+                review_columns[f'review{ i + 1}_text'][0] = review['text']
+
+            # review_df = pd.DataFrame(review_columns)
+
+            # if not isinstance(review_df, pd.DataFrame):
+            #     raise TypeError(f"DataFrameになっていない\n{type(review_df)}")
+
+            # self.logger.info(f"review_df: \n{review_df.head(3)}")
+
+            # review_df.to_csv('installer/result_output/review_df.csv')
+
+            self.logger.warning(f"review_columns: {review_columns}")
 
 
+            self.logger.info(f"********  _sort_reviews_to_df end ********")
 
-            self.logger.info(f"********  html_replace end ********")
+            return review_columns
+
 
         except Exception as e:
-            self.logger.error(f"html_replace 処理中にエラーが発生: {e}")
+            self.logger.error(f"_sort_reviews_to_df 処理中にエラーが発生: {e}")
+            raise
 
 
 # ----------------------------------------------------------------------------------
@@ -1107,13 +1188,11 @@ class GoogleMapBase:
             #! 変換しなければならない箇所
             # 住所→formatted_addressをGoogle Maps Geocoding APIを使うことで日本語変換する→dfにして結合
 
-            #TODO 営業時間
-            #TODO 定休日
 
             #TODO レビュ→profile_photo_url, author_name, rating, text, →それぞれの項目を作成なし（-）
 
             #TODO 写真→ありなし
-            #TODO website→ありなし
+
 
 
 
