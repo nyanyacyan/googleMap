@@ -878,7 +878,7 @@ class GoogleMapBase:
                         json_data_list.append(none_res)
 
                     else:
-                        # json形式からpythonデータへ変換
+                        # json形式から辞書形式へ変換
                         # ダブルコーテへ変換する（シングルコーテはjson.loadsに対応してないため）
                         json_to_data = json.loads(data.replace("'", "\""))
                         json_data_list.append(json_to_data)
@@ -898,6 +898,8 @@ class GoogleMapBase:
 
 
 # ----------------------------------------------------------------------------------
+
+# 辞書データから抽出してリストにする
 # addressからデータを抜く基本のメソッド
 
     def _get_address_data(self, cell_data, address_type):
@@ -1107,6 +1109,7 @@ class GoogleMapBase:
             # 辞書を作成する（Column名のケツに1を足していく）
             # 辞書を作る→DataFrameにした際にはKeyがColumnになる
             # 空のDataFrameを作成する際には全てに[None]を入れる
+<<<<<<< HEAD
             review_columns = {f'review{ i + 1 }_rating' : [None] for i in range(5)}
             self.logger.warning(f"review_columns: {review_columns}")
 
@@ -1114,25 +1117,28 @@ class GoogleMapBase:
             # .updateは追記するということ
             review_columns.update({f'review{ i + 1 }_name' : [None] for i in range(5)})
             review_columns.update({f'review{ i + 1 }_text' : [None] for i in range(5)})
+=======
+            review_columns = {f'review{ i + 1 }_rating' : '-' for i in range(5)}
+
+            # .updateは追記するということ
+            review_columns.update({f'review{ i + 1 }_name' : '-' for i in range(5)})
+            review_columns.update({f'review{ i + 1 }_text' : '-' for i in range(5)})
+>>>>>>> 692d8832f5566d027b14ee34994e99943eb8b702
 
             self.logger.debug(f"review_columns: {review_columns}")
 
             # Columnの名称（順位）にそれぞれの値を埋め込んでいく
             # 作られたColumnに順位別に横に埋め込んでいく感じ
             # 辞書の値を追加する際には基本は代入
-            for i, review in enumerate(sorted_rating):
-                review_columns[f'review{ i + 1}_rating'][0] = review['rating']
-                review_columns[f'review{ i + 1}_name'][0] = review['author_name']
-                review_columns[f'review{ i + 1}_text'][0] = review['text']
+            for i, review in enumerate(sorted_rating[:5]):
+                review_columns[f'review{ i + 1}_rating'] = review['rating']
+                review_columns[f'review{ i + 1}_name'] = review['author_name']
+                review_columns[f'review{ i + 1}_text'] = review['text']
 
-            # review_df = pd.DataFrame(review_columns)
+            for key, value in review_columns.items():
+                if value == '-':
+                    review_columns[key] = None
 
-            # if not isinstance(review_df, pd.DataFrame):
-            #     raise TypeError(f"DataFrameになっていない\n{type(review_df)}")
-
-            # self.logger.info(f"review_df: \n{review_df.head(3)}")
-
-            # review_df.to_csv('installer/result_output/review_df.csv')
 
             self.logger.warning(f"review_columns: {review_columns}")
 
@@ -1150,10 +1156,6 @@ class GoogleMapBase:
 # ----------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------
-# ----------------------------------------------------------------------------------
-
-
-
 # ----------------------------------------------------------------------------------
 # Google mapAPIでjson取得
 # jsonからplase_idを取得
