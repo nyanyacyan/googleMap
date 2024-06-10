@@ -81,16 +81,16 @@ class Test:
         )
 
         # 町名
-        add_sublocality_df =self.df_merge.process(
-            key_df = add_locality_df,  # 更新したDataFrameを入れる
-            column = 'address_components',
-            add_func = self.gm_geocoding._get_sublocality,
-            new_column = 'sublocality'
-        )
+        # add_sublocality_df =self.df_merge.process(
+        #     key_df = add_locality_df,  # 更新したDataFrameを入れる
+        #     column = 'address_components',
+        #     add_func = self.gm_geocoding._get_sublocality,
+        #     new_column = 'sublocality'
+        # )
 
         # photo_link
         add_photo_link_df =self.df_merge.process(
-            key_df = add_sublocality_df,  # 更新したDataFrameを入れる
+            key_df = add_locality_df,  # 更新したDataFrameを入れる
             column = 'photos',
             add_func = self.gm_geocoding._get_photo_link,
             new_column = 'photo_link'
@@ -103,22 +103,19 @@ class Test:
 
         # review_1
         add_review_df =self.df_merge.review_merge_process(
-            key_df = add_sublocality_df,  # 更新したDataFrameを入れる
+            key_df = add_nave_position_df,  # 更新したDataFrameを入れる
             column = 'reviews',
             add_func = self.gm_geocoding._sort_reviews_to_df,
         )
 
 
-
-
         # 必要な情報に絞り込み
-        # sorted_df = self.gm_geocoding.df_sort(
-        #     df=Last_df,
-        #     new_order=['name', 'photos', 'geometry.viewport.northeast.lat', 'geometry.viewport.northeast.lng', 'geometry.viewport.southwest.lat', 'geometry.viewport.southwest.lng', 'japanese_address', 'formatted_phone_number', 'business_hours', 'close_days', 'url', 'reviews', 'prefectures', 'locality', 'sublocality', 'photo_link','center_lat', 'center_lng']
-        # )
+        sorted_df = self.gm_geocoding.df_sort(
+            df=add_review_df,
+            new_order=['name', 'photos', 'geometry.viewport.northeast.lat', 'geometry.viewport.northeast.lng', 'geometry.viewport.southwest.lat', 'geometry.viewport.southwest.lng', 'japanese_address', 'formatted_phone_number', 'business_hours', 'close_days', 'url', 'reviews', 'prefectures', 'locality', 'sublocality', 'photo_link','center_lat', 'center_lng', 'review1_rating', 'review2_rating', 'review3_rating', 'review4_rating', 'review5_rating', 'review1_name', 'review2_name', 'review3_name', 'review4_name', 'review5_name', 'review1_text', 'review2_text', 'review3_text', 'review4_text', 'review5_text']
+        )
 
-
-        return add_review_df
+        return sorted_df
 
 
 
