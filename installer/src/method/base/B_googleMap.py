@@ -1109,7 +1109,7 @@ class GoogleMapBase:
             # 辞書を作成する（Column名のケツに1を足していく）
             # 辞書を作る→DataFrameにした際にはKeyがColumnになる
             # 空のDataFrameを作成する際には全てに[None]を入れる
-<<<<<<< HEAD
+
             review_columns = {f'review{ i + 1 }_rating' : [None] for i in range(5)}
             self.logger.warning(f"review_columns: {review_columns}")
 
@@ -1117,13 +1117,13 @@ class GoogleMapBase:
             # .updateは追記するということ
             review_columns.update({f'review{ i + 1 }_name' : [None] for i in range(5)})
             review_columns.update({f'review{ i + 1 }_text' : [None] for i in range(5)})
-=======
+
             review_columns = {f'review{ i + 1 }_rating' : '-' for i in range(5)}
 
             # .updateは追記するということ
             review_columns.update({f'review{ i + 1 }_name' : '-' for i in range(5)})
             review_columns.update({f'review{ i + 1 }_text' : '-' for i in range(5)})
->>>>>>> 692d8832f5566d027b14ee34994e99943eb8b702
+
 
             self.logger.debug(f"review_columns: {review_columns}")
 
@@ -1154,6 +1154,37 @@ class GoogleMapBase:
 
 
 # ----------------------------------------------------------------------------------
+# DataFrameを並び替える
+
+    def df_sort(self, df, new_order):
+        try:
+            self.logger.info(f"******** df_sort 開始 ********")
+
+            self.logger.debug(f"df: \n{df.head(3)}")
+            self.logger.debug(f"new_order: {new_order}")
+
+            if not df.empty:
+                if all(col in df.columns for col in new_order):
+                    sorted_df = df[new_order]
+
+                else:
+                    raise ValueError("new_orderで指定してるcolumnがDataFrameに存在しない")
+
+            sorted_df.to_csv('installer/result_output/sorted_df.csv')
+
+            self.logger.warning(f"df: \n{sorted_df.head(3)}")
+
+            self.logger.info(f"******** df_sort 終了 ********")
+
+            return sorted_df
+
+        except ValueError as ve:
+            self.logger.error(f"new_orderで指定してるcolumnがDataFrameに存在しない: {ve}")
+
+        except Exception as e:
+            self.logger.error(f"df_sort 処理中にエラーが発生: {e}")
+
+
 # ----------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------
