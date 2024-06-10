@@ -1107,11 +1107,13 @@ class GoogleMapBase:
             # 辞書を作成する（Column名のケツに1を足していく）
             # 辞書を作る→DataFrameにした際にはKeyがColumnになる
             # 空のDataFrameを作成する際には全てに[None]を入れる
-            review_columns = {f'review{ i + 1 }_rating' : None for i in range(5)}
+            review_columns = {f'review{ i + 1 }_rating' : [None] for i in range(5)}
+            self.logger.warning(f"review_columns: {review_columns}")
+
 
             # .updateは追記するということ
-            review_columns.update({f'review{ i + 1 }_name' : None for i in range(5)})
-            review_columns.update({f'review{ i + 1 }_text' : None for i in range(5)})
+            review_columns.update({f'review{ i + 1 }_name' : [None] for i in range(5)})
+            review_columns.update({f'review{ i + 1 }_text' : [None] for i in range(5)})
 
             self.logger.debug(f"review_columns: {review_columns}")
 
