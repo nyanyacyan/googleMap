@@ -115,7 +115,7 @@ class HtmlReplaceBase:
 
     def review_html_generate(self, template_dir, file_name, row):
         try:
-            self.logger.info(f"******** jinja2_replace_html start ********")
+            self.logger.info(f"******** review_html_generate start ********")
 
             self.logger.debug(f"template_dir: {template_dir}")
             self.logger.debug(f"file_name: {file_name}")
@@ -129,7 +129,10 @@ class HtmlReplaceBase:
             review_html_list = []
 
             if not row.empty:
+                # １から５までの数を繰り返し行う
+                # iに代入することでその値を取得してレンダリングすることを繰り返し処理する
                 for i in range(1, 6):
+                    # 各行のColumnを定義（１〜５までのもの）
                     rating = row[f'review{i}_rating']
                     name = row[f'review{i}_name']
                     text = row[f'review{i}_text']
@@ -151,20 +154,26 @@ class HtmlReplaceBase:
 
                         review_html_list.append(review_html)
 
-            if review_html_list is None:
-                return 'レビュー実績がありません。'
+                    else:
+                        review_html_list.append('')
 
+            # 行でのhtml生成したものを結合させる
             review_html = ''.join(review_html_list)
 
             self.logger.warning(f"review_html: {review_html}")
+            self.logger.warning(type(review_html))
 
-            self.logger.info(f"******** jinja2_replace_html start ********")
+            # review_htmlが入っていたら
+            if not review_html:
+                return 'レビュー実績がありません。'
+
+            self.logger.info(f"******** review_html_generate end ********")
 
             return review_html
 
 
         except Exception as e:
-            self.logger.error(f"jinja2_replace_html 処理中にエラーが発生: {e}")
+            self.logger.error(f"review_html_generate 処理中にエラーが発生: {e}")
 
 
 # ----------------------------------------------------------------------------------
@@ -172,7 +181,7 @@ class HtmlReplaceBase:
 
     def df_to_row_process(self, df, template_dir, file_name):
         try:
-            self.logger.info(f"******** jinja2_replace_html start ********")
+            self.logger.info(f"******** df_to_row_process start ********")
 
             self.logger.debug(f"template_dir: {template_dir}")
 
@@ -182,14 +191,16 @@ class HtmlReplaceBase:
                 lambda row: self.review_html_generate(template_dir, file_name, row), axis=1
             )
 
-            self.logger.info(f"******** jinja2_replace_html start ********")
+            self.logger.warning(df['review_html'].tail(5))
+
+            self.logger.info(f"******** df_to_row_process end ********")
 
             df.to_csv('installer/result_output/review_html.csv')
 
             return df
 
         except Exception as e:
-            self.logger.error(f"jinja2_replace_html 処理中にエラーが発生: {e}")
+            self.logger.error(f"df_to_row_process 処理中にエラーが発生: {e}")
             raise
 
 
