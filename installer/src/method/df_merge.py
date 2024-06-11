@@ -151,3 +151,37 @@ class DfProcessMerge(GoogleMapBase):
 
 
 # ----------------------------------------------------------------------------------
+# reviewのhtmlをmergeさせる
+
+    def review_html_merge_process(self, key_df, column, add_func, new_column):
+        try:
+            self.logger.info(f"******** review_html_merge_process 開始 ********")
+
+            # 特定のcolumnのデータを取得
+            list_data =self._get_column_data(key_df, column)
+            self.logger.debug(f"list_data: {list_data}")
+            time.sleep(2)
+
+            # columnの値、それぞれに処理を加えてリストにする
+            fixed_data = self.add_process_value_in_list(list_data=list_data, add_func=add_func)
+            time.sleep(2)
+
+            # リストをDataFrameにする
+            add_df = self._to_df(fixed_data, new_column=new_column)
+            time.sleep(2)
+
+            # DataFrameを結合させる
+            new_df = self._df_marge(key_df=key_df, add_df=add_df)
+            time.sleep(2)
+
+            self.logger.info(f"******** review_html_merge_process 終了 ********")
+
+            new_df.to_csv('installer/result_output/merge_df.csv')
+
+            return new_df
+
+        except Exception as e:
+            self.logger.error(f"review_html_merge_process 処理中にエラーが発生: {e}")
+
+
+# ----------------------------------------------------------------------------------

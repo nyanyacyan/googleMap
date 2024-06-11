@@ -588,7 +588,7 @@ class GoogleMapBase:
 
 
 # ----------------------------------------------------------------------------------
-# 各リストに処理を当て込めていく
+# # 各リストに処理を当て込めていく
 
     def review_add_process_value_in_list(self, list_data, add_func):
         try:
@@ -624,7 +624,8 @@ class GoogleMapBase:
             self.logger.error(f"review_add_process_value_in_list 処理中にエラーが発生: {e}")
 
 
-# ----------------------------------------------------------------------------------# 営業時間を抽出
+# ----------------------------------------------------------------------------------
+# # 営業時間を抽出
 
     def get_business_hour(self, list_data):
         try:

@@ -5,6 +5,7 @@
 
 # ----------------------------------------------------------------------------------
 import re
+import pandas as pd
 from jinja2 import Environment, FileSystemLoader
 
 
@@ -110,42 +111,89 @@ class HtmlReplaceBase:
 
 
 # ----------------------------------------------------------------------------------
-# jinja2を使った置換
+# 行ごとのレビューデータの集約
 
-    def jinja2_replace_html(self, template_dir, file_name, template_html, white_html, replace_data, df):
+    def review_html_generate(self, template_dir, file_name, row):
         try:
             self.logger.info(f"******** jinja2_replace_html start ********")
 
-            self.logger.debug(f"template_html: {template_html[:100]}")
-            self.logger.debug(f"white_html: {white_html}")
-            self.logger.debug(f"replace_data: {replace_data}")
-            self.logger.debug(f"df:\n{df.head(3)}")
+            self.logger.debug(f"template_dir: {template_dir}")
+            self.logger.debug(f"file_name: {file_name}")
 
             # jinja2を使って置換を行う際、ファイルまでのディレクトリを記載（ファイル名を除く）
             env = Environment(loader=FileSystemLoader(template_dir))
 
             # ファイル名を指定する
-            template = env.get.template(file_name)
+            template = env.get_template(file_name)
 
-            if not df.empty:
-                for index, row in df.iterrows():
+            review_html_list = []
 
-                    # TODO ここから入力変換する部分を指定していく
+            if not row.empty:
+                for i in range(1, 6):
+                    rating = row[f'review{i}_rating']
+                    name = row[f'review{i}_name']
+                    text = row[f'review{i}_text']
 
+                    if pd.notna(rating) and pd.notna(name):
+                        # 値のデータをDataFrameから抽出して辞書にまとめる
+                        review = {
+                            'rating' : rating,
+                            'name' : name,
+                            'text' : text if pd.notna(text) else ''
+                        }
 
-                template.render(data)
+                        # templateを元に取得したデータを入れ込んでレンダリング実施
+                        review_html = template.render(
+                            rating=review['rating'],
+                            name=review['name'],
+                            text=review['text']
+                        )
 
-            self.logger.info(f"******** jinja2_replace_html end ********")
+                        review_html_list.append(review_html)
 
-            return output_html
+            if review_html_list is None:
+                return 'レビュー実績がありません。'
+
+            review_html = ''.join(review_html_list)
+
+            self.logger.warning(f"review_html: {review_html}")
+
+            self.logger.info(f"******** jinja2_replace_html start ********")
+
+            return review_html
+
 
         except Exception as e:
             self.logger.error(f"jinja2_replace_html 処理中にエラーが発生: {e}")
 
 
 # ----------------------------------------------------------------------------------
+# 各行での処理を追加する
+
+    def df_to_row_process(self, df, template_dir, file_name):
+        try:
+            self.logger.info(f"******** jinja2_replace_html start ********")
+
+            self.logger.debug(f"template_dir: {template_dir}")
+
+            # applyの中に「axis=1」を入れることで各行の処理にする
+            #! 変数にDataFrameの新しいColumnを指定することで追記できる
+            df['review_html'] = df.apply(
+                lambda row: self.review_html_generate(template_dir, file_name, row), axis=1
+            )
+
+            self.logger.info(f"******** jinja2_replace_html start ********")
+
+            df.to_csv('installer/result_output/review_html.csv')
+
+            return df
+
+        except Exception as e:
+            self.logger.error(f"jinja2_replace_html 処理中にエラーが発生: {e}")
+            raise
 
 
+# ----------------------------------------------------------------------------------
 
 #! 置換するものリスト
 
