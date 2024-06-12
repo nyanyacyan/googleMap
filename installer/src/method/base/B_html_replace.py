@@ -6,7 +6,7 @@
 # ----------------------------------------------------------------------------------
 import re
 import pandas as pd
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader, exceptions
 
 
 # 自作モジュール
@@ -95,7 +95,6 @@ class HtmlReplaceBase:
             with open(update_file_path, 'w', encoding='utf-8') as file:
                 new_html_file = file.write(all_update_html_code)
 
-            self.logger.debug(f"new_html_file:\n {new_html_file[:100]}")
 
             self.logger.info(f"********  html_replace end ********")
 
@@ -165,7 +164,7 @@ class HtmlReplaceBase:
 
             # review_htmlが入っていたら
             if not review_html:
-                return 'レビュー実績がありません。'
+                return ''
 
             self.logger.info(f"******** review_html_generate end ********")
 
@@ -207,7 +206,7 @@ class HtmlReplaceBase:
 # ----------------------------------------------------------------------------------
 # すべての値を置換してhtml出力する
 
-    def df_to_html(self, df, template_dir, file_name, update_file_path):
+    def df_to_html(self, df, input_word, template_dir, file_name, update_file_path):
         try:
             self.logger.info(f"******** df_to_row_process start ********")
 
@@ -227,6 +226,7 @@ class HtmlReplaceBase:
                     photo_link = row['photo_link']
                     prefectures = row['prefectures']
                     locality = row['locality']
+                    input = input_word
                     center_lat = row['center_lat']
                     center_lng = row['center_lng']
                     japanese_address = row['japanese_address']
@@ -236,12 +236,13 @@ class HtmlReplaceBase:
                     website = row['website']
                     review_html = row['review_html']
 
-
+                    # レンダリングの実施
                     html_code = template.render(
                         name=name,
                         photo_link=photo_link,
                         prefectures=prefectures,
                         locality=locality,
+                        input=input,
                         center_lat=center_lat,
                         center_lng=center_lng,
                         japanese_address=japanese_address,
@@ -267,6 +268,10 @@ class HtmlReplaceBase:
                 update_file_path=update_file_path,
                 all_update_html_code=html_list
             )
+
+        except exceptions.TemplateNotFound:
+            self.logger.error(f"Templateに指定してる{file_name}がみつからない: {e}")
+            raise
 
         except Exception as e:
             self.logger.error(f"df_to_row_process 処理中にエラーが発生: {e}")

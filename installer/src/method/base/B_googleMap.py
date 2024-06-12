@@ -565,7 +565,9 @@ class GoogleMapBase:
                 # もしデータがない場合には追記する
                 if data is None or (isinstance(data, float) and math.isnan(data)):
                     self.logger.info(f"dataがNone")
-                    original_data_list.append("google map に情報がありません")
+
+                    # TODO Googleマップに情報がなかったときにいれる文言
+                    original_data_list.append("")
 
                 else:
                     original_data = add_func(data)
@@ -787,7 +789,7 @@ class GoogleMapBase:
             if isinstance(list_data, pd.Series):
                 self.logger.debug(f"list_dataはSeriesになってる。")
 
-                list_data = list_data.apply(lambda x: ['google map に情報がありません'] if pd.isna(x) else x).tolist()
+                list_data = list_data.apply(lambda x: [''] if pd.isna(x) else x).tolist()
                 # list_data = [item for sublist in list_data for item in sublist]
 
             # rank 順にソート
@@ -835,7 +837,9 @@ class GoogleMapBase:
                 # もしデータがない場合には追記する
                 if data is None or (isinstance(data, float) and math.isnan(data)):
                     self.logger.warning(f"dataがNone")
-                    original_data_list.append("google map に情報がありません")
+
+                    # TODO Googleマップに情報がなかったときにいれる文言
+                    original_data_list.append("")
 
                 else:
                     original_data = add_func(data)

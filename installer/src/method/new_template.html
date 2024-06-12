@@ -1,0 +1,37 @@
+<!-- wp:heading {"level":3} -->
+<h3 class="wp-block-heading">{{ name }}</h3>
+<!-- /wp:heading -->
+
+<!-- wp:image {"id":238,"sizeSlug":"full","linkDestination":"none"} -->
+<figure class="wp-block-image size-full"><img src="{{ photo_link }}" alt="" class="wp-image-238"/></figure>
+<!-- /wp:image -->
+
+<!-- wp:paragraph -->
+<p>{{ name }} は、{{ prefectures }} {{ locality }} にある {{ input }} が魅力の店舗です。</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:html -->
+<div class="wrap">
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3242.7554040169807!2d{{ center_lng }}!3d{{ center_lat }}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x60188b1c691da52d%3A0xb38e70bbbba4f599!2z44CSMTQxLTAwMjEg5p2x5Lqs6YO95ZOB5bed5Yy65LiK5aSn5bSO77yT5LiB55uu77yT4oiS77yZIOengOWSjOebrum7kumnheWJjeODrOOCuOODh-ODs-OCuSAxMTQ!5e0!3m2!1sja!2sjp!4v1714113764843!5m2!1sja!2sjp" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+    <!-- /wp:html -->
+
+<!-- wp:table {"className":"","swlBodyThColor":{"text":"black","slug":"swl-gray"},"swlCell1Width":"200px"} -->
+<figure class="wp-block-table"><table><tbody><tr><th>住所</th><td>{{ japanese_address }}</td></tr><tr><th>電話番号</th><td>{{ formatted_phone_number }}</td></tr><tr><th>営業時間</th><td>{{ business_hours }}</td></tr><tr><th>定休日</th><td>{{ close_days }}</td></tr><tr><th>公式HP</th><td><a href="{{ website }}"></a></td></tr></tbody></table><figcaption class="wp-element-caption"> {{ name }} の概要</figcaption></figure>
+<!-- /wp:table -->
+
+<!-- wp:heading {"level":4} -->
+<h4 class="wp-block-heading">ネット上の口コミ</h4>
+<!-- /wp:heading -->
+
+
+{{ review_html }}
+
+
+<!-- wp:heading {"level":4} -->
+<h4 class="wp-block-heading">おすすめポイント</h4>
+<!-- /wp:heading -->
+
+<!-- wp:table {"swlCell1Width":"200px"} -->
+<figure class="wp-block-table"><table><thead><tr><th>項目</th><th class="has-text-align-center" data-align="center">評価</th><th>詳細</th></tr></thead><tbody><tr><th>ジャンル</th><td class="has-text-align-center" data-align="center"></td><td>アロマセラピーサービス</td></tr><tr><th>ヒーラー</th><td class="has-text-align-center" data-align="center"></td><td></td></tr><tr><th>メニュー</th><td class="has-text-align-center" data-align="center"></td><td></td></tr><tr><th>料金</th><td class="has-text-align-center" data-align="center"></td><td></td></tr><tr><th>アクセス</th><td class="has-text-align-center" data-align="center"></td><td></td></tr><tr><th>口コミ</th><td class="has-text-align-center" data-align="center"></td><td></td></tr><tr><th>アフター<br>フォロー</th><td class="has-text-align-center" data-align="center">ー</td><td></td></tr></tbody></table></figure>
+<!-- /wp:table -->

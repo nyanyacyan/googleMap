@@ -37,7 +37,7 @@ class Test:
 ####################################################################################
 # ----------------------------------------------------------------------------------
 
-    def test_main(self, query):
+    def test_main(self, query, input_word):
         key_df = self.get_gm_df.process(
             query=query,
         )
@@ -106,7 +106,7 @@ class Test:
         # review_html
         add_review_html_df = self.html_replace.df_to_row_process(
             df=add_review_df,
-            template_dir='installer/src/method/input_data',
+            template_dir='installer/src/method',
             file_name='review_format.html'
         )
 
@@ -117,7 +117,16 @@ class Test:
             new_order=['name', 'photos', 'geometry.viewport.northeast.lat', 'geometry.viewport.northeast.lng', 'geometry.viewport.southwest.lat', 'geometry.viewport.southwest.lng', 'japanese_address', 'formatted_phone_number', 'business_hours', 'close_days', 'website', 'prefectures', 'locality', 'photo_link','center_lat', 'center_lng', 'review1_rating', 'review2_rating', 'review3_rating', 'review4_rating', 'review5_rating', 'review1_name', 'review2_name', 'review3_name', 'review4_name', 'review5_name', 'review1_text', 'review2_text', 'review3_text', 'review4_text', 'review5_text', 'review_html']
         )
 
-        return sorted_df
+        # 全てを置換
+        self.html_replace.df_to_html(
+            df=sorted_df,
+            input_word=input_word,
+            template_dir='installer/src/method',
+            file_name='new_template.html',
+            update_file_path='installer/result_output/result_html_data'
+        )
+
+        self.logger.info(f"html生成完了: 「result_output」の中にある「result_html_data」をご確認ください")
 
 
 
@@ -146,5 +155,6 @@ class Test:
 
 if __name__ == '__main__':
     query='調布 工務店'
+    input_word='正確性'
     test_process= Test()
-    test_process.test_main(query=query)
+    test_process.test_main(query=query, input_word=input_word)
