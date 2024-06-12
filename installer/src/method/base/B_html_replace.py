@@ -207,7 +207,7 @@ class HtmlReplaceBase:
 # ----------------------------------------------------------------------------------
 # すべての値を置換してhtml出力する
 
-    def df_to_html(self, df, template_dir, file_name):
+    def df_to_html(self, df, template_dir, file_name, update_file_path):
         try:
             self.logger.info(f"******** df_to_row_process start ********")
 
@@ -223,13 +223,50 @@ class HtmlReplaceBase:
 
             if not df.empty:
                 for index, row in df.iterrows():
+                    name = row['name']
+                    photo_link = row['photo_link']
+                    prefectures = row['prefectures']
+                    locality = row['locality']
+                    center_lat = row['center_lat']
+                    center_lng = row['center_lng']
+                    japanese_address = row['japanese_address']
+                    formatted_phone_number = row['formatted_phone_number']
+                    business_hours = row['business_hours']
+                    close_days = row['close_days']
+                    website = row['website']
+                    review_html = row['review_html']
 
 
+                    html_code = template.render(
+                        name=name,
+                        photo_link=photo_link,
+                        prefectures=prefectures,
+                        locality=locality,
+                        center_lat=center_lat,
+                        center_lng=center_lng,
+                        japanese_address=japanese_address,
+                        formatted_phone_number=formatted_phone_number,
+                        business_hours=business_hours,
+                        close_days=close_days,
+                        website=website,
+                        review_html=review_html
+                    )
 
+                    self.logger.warning(f"html_code.{index}: {html_code}")
 
+                    html_list.append(html_code)
+
+            html_list = ''.join(html_list)
+
+            self.logger.debug(f"html_list: {html_list[:100]}")
 
             self.logger.info(f"******** df_to_row_process end ********")
 
+            # htmlファイルに書き込み
+            self._html_file_write(
+                update_file_path=update_file_path,
+                all_update_html_code=html_list
+            )
 
         except Exception as e:
             self.logger.error(f"df_to_row_process 処理中にエラーが発生: {e}")
@@ -238,10 +275,14 @@ class HtmlReplaceBase:
 
 # ----------------------------------------------------------------------------------
 
+
+
+# ----------------------------------------------------------------------------------
+
 #! 置換するものリスト
 
-# TODO 地図（緯度、経度）
-# TODO 店舗名
+# 
+#  店舗名
 # TODO 写真
 # TODO 電話番号
 # TODO レビュー（ランク、名前、テキスト）
