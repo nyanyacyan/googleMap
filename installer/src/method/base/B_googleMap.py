@@ -124,7 +124,7 @@ class GoogleMapBase:
             self.logger.debug(df.head())
 
             # DataFrameをデバッグ用にCSV出力
-            df.to_csv('installer/result_output/res_df.csv')
+            # df.to_csv('installer/result_output/res_df.csv')
 
             return df
 
@@ -571,7 +571,7 @@ class GoogleMapBase:
 
                 else:
                     original_data = add_func(data)
-                    self.logger.warning(f"original_data: {original_data}")
+                    self.logger.debug(f"original_data: {original_data}")
 
                     # もしリストのデータだったら結合させてリストに追加
                     if isinstance(original_data, list):
@@ -579,7 +579,7 @@ class GoogleMapBase:
                     else:
                         original_data_list.append(original_data)
 
-            self.logger.warning(f"original_data_list: {original_data_list}")
+            self.logger.debug(f"original_data_list: {original_data_list}")
 
             self.logger.info(f"******** add_process_value_in_list 終了 ********")
 
@@ -608,7 +608,7 @@ class GoogleMapBase:
 
                 else:
                     original_data = add_func(data)
-                    self.logger.warning(f"original_data: {original_data}")
+                    self.logger.debug(f"original_data: {original_data}")
 
                     # もしリストのデータだったら結合させてリストに追加
                     if isinstance(original_data, list):
@@ -616,7 +616,7 @@ class GoogleMapBase:
                     else:
                         original_data_list.append(original_data)
 
-            self.logger.warning(f"original_data_list: {original_data_list}")
+            self.logger.debug(f"original_data_list: {original_data_list}")
 
             self.logger.info(f"******** review_add_process_value_in_list 終了 ********")
 
@@ -784,7 +784,7 @@ class GoogleMapBase:
 
             self.logger.debug(f"list_data: \n{list_data}")
 
-            list_data.to_csv('installer/result_output/list_data.csv')
+            # list_data.to_csv('installer/result_output/list_data.csv')
 
             if isinstance(list_data, pd.Series):
                 self.logger.debug(f"list_dataはSeriesになってる。")
@@ -836,14 +836,14 @@ class GoogleMapBase:
             for data in list_data:
                 # もしデータがない場合には追記する
                 if data is None or (isinstance(data, float) and math.isnan(data)):
-                    self.logger.warning(f"dataがNone")
+                    self.logger.debug(f"dataがNone")
 
                     # TODO Googleマップに情報がなかったときにいれる文言
                     original_data_list.append("")
 
                 else:
                     original_data = add_func(data)
-                    self.logger.warning(f"original_data: {original_data}")
+                    self.logger.debug(f"original_data: {original_data}")
 
                     # もしリストのデータだったら結合させてリストに追加
                     if isinstance(original_data, list):
@@ -851,7 +851,7 @@ class GoogleMapBase:
                     else:
                         self.logger.error(f"データが違う可能性が高い。")
 
-            self.logger.warning(f"original_data_list: {original_data_list}")
+            self.logger.debug(f"original_data_list: {original_data_list}")
 
             self.logger.info(f"******** add_process_value_in_list 終了 ********")
 
@@ -888,7 +888,7 @@ class GoogleMapBase:
                         json_to_data = json.loads(data.replace("'", "\""))
                         json_data_list.append(json_to_data)
 
-            self.logger.warning(f"json_data_list: \n{json_data_list}")
+            self.logger.debug(f"json_data_list: \n{json_data_list}")
 
             self.logger.info(f"******** get_json_data 終了 ********")
 
@@ -1011,7 +1011,7 @@ class GoogleMapBase:
 
             # 空の場合（NaN）の場合
             if cell_data is None or (isinstance(cell_data, float) and math.isnan(cell_data)):
-                self.logger.warning(f"{cell_data} が None")
+                self.logger.debug(f"{cell_data} が None")
                 return "GoogleMapには写真の掲載なし"
 
             # 写真データの最初の画像を使用
@@ -1028,7 +1028,7 @@ class GoogleMapBase:
 
                     return photo_link
 
-            self.logger.warning(f"適切な写真が見つかりませんでした。")
+            self.logger.debug(f"適切な写真が見つかりませんでした。")
 
             self.logger.info(f"********  _get_photo_link end ********")
 
@@ -1070,8 +1070,8 @@ class GoogleMapBase:
                         center_lat = (northeast_lat + southwest_lat) / 2
                         center_lng = (northeast_lng + southwest_lng) / 2
 
-                        self.logger.warning(f"center_lat: {center_lat}")
-                        self.logger.warning(f"center_lng: {center_lng}")
+                        self.logger.debug(f"center_lat: {center_lat}")
+                        self.logger.debug(f"center_lng: {center_lng}")
 
                         # 辞書データにする
                         lat_lng_dict = {'center_lat' : center_lat,'center_lng' : center_lng}
@@ -1103,7 +1103,7 @@ class GoogleMapBase:
 
             # 空の場合（NaN）の場合
             if cell_data is None or (isinstance(cell_data, float) and math.isnan(cell_data)):
-                self.logger.warning(f"{cell_data} が None")
+                self.logger.debug(f"{cell_data} が None")
                 return 'レビューデータがありません。'
 
             # 'rating'にて降順にsort
@@ -1116,7 +1116,7 @@ class GoogleMapBase:
             # 空のDataFrameを作成する際には全てに[None]を入れる
 
             review_columns = {f'review{ i + 1 }_rating' : [None] for i in range(5)}
-            self.logger.warning(f"review_columns: {review_columns}")
+            self.logger.debug(f"review_columns: {review_columns}")
 
 
             # .updateは追記するということ
@@ -1145,7 +1145,7 @@ class GoogleMapBase:
                     review_columns[key] = None
 
 
-            self.logger.warning(f"review_columns: {review_columns}")
+            self.logger.debug(f"review_columns: {review_columns}")
 
 
             self.logger.info(f"********  _sort_reviews_to_df end ********")
@@ -1175,9 +1175,9 @@ class GoogleMapBase:
                 else:
                     raise ValueError("new_orderで指定してるcolumnがDataFrameに存在しない")
 
-            sorted_df.to_csv('installer/result_output/sorted_df.csv')
+            # sorted_df.to_csv('installer/result_output/sorted_df.csv')
 
-            self.logger.warning(f"df: \n{sorted_df.head(3)}")
+            self.logger.debug(f"df: \n{sorted_df.head(3)}")
 
             self.logger.info(f"******** df_sort 終了 ********")
 

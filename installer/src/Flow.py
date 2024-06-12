@@ -125,7 +125,7 @@ class Flow:
             update_file_path='installer/result_output/result_html_data'
         )
 
-        self.logger.info(f"html生成完了: 「result_output」の中にある「result_html_data」をご確認ください")
+        self.logger.warning(f"html生成完了: 「result_output」の中にある「result_html_data」をご確認ください")
 
 
 

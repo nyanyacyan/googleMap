@@ -159,8 +159,8 @@ class HtmlReplaceBase:
             # 行でのhtml生成したものを結合させる
             review_html = ''.join(review_html_list)
 
-            self.logger.warning(f"review_html: {review_html}")
-            self.logger.warning(type(review_html))
+            self.logger.debug(f"review_html: {review_html}")
+            self.logger.debug(type(review_html))
 
             # review_htmlが入っていたら
             if not review_html:
@@ -190,9 +190,9 @@ class HtmlReplaceBase:
                 lambda row: self.review_html_generate(template_dir, file_name, row), axis=1
             )
 
-            self.logger.warning(df['review_html'].tail(5))
+            self.logger.debug(df['review_html'].tail(5))
 
-            df.to_csv('installer/result_output/review_html.csv')
+            # df.to_csv('installer/result_output/review_html.csv')
 
             self.logger.info(f"******** df_to_row_process end ********")
 
@@ -253,7 +253,7 @@ class HtmlReplaceBase:
                         review_html=review_html
                     )
 
-                    self.logger.warning(f"html_code.{index}: {html_code}")
+                    self.logger.debug(f"html_code.{index}: {html_code}")
 
                     html_list.append(html_code)
 

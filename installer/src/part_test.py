@@ -5,7 +5,6 @@
 # ----------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------
 import os
-import const
 from dotenv import load_dotenv
 from method.base.B_googleMap import GoogleMapBase
 from method.base.B_html_replace import HtmlReplaceBase

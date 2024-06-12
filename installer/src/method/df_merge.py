@@ -5,8 +5,6 @@
 # ----------------------------------------------------------------------------------
 import time
 import pandas as pd
-import const
-import requests
 
 # 自作モジュール
 from .base.B_googleMap import GoogleMapBase
@@ -85,7 +83,7 @@ class DfProcessMerge(GoogleMapBase):
 
             self.logger.info(f"******** DfProcessMerge 終了 ********")
 
-            new_df.to_csv('installer/result_output/merge_df.csv')
+            # new_df.to_csv('installer/result_output/merge_df.csv')
 
             return new_df
 
@@ -110,7 +108,7 @@ class DfProcessMerge(GoogleMapBase):
 
             self.logger.info(f"******** DfProcessMerge 終了 ********")
 
-            new_df.to_csv('installer/result_output/merge_df.csv')
+            # new_df.to_csv('installer/result_output/merge_df.csv')
 
             return new_df
 
@@ -142,7 +140,7 @@ class DfProcessMerge(GoogleMapBase):
 
             self.logger.info(f"******** review_merge_process 終了 ********")
 
-            new_df.to_csv('installer/result_output/merge_df.csv')
+            # new_df.to_csv('installer/result_output/merge_df.csv')
 
             return new_df
 
@@ -176,7 +174,7 @@ class DfProcessMerge(GoogleMapBase):
 
             self.logger.info(f"******** review_html_merge_process 終了 ********")
 
-            new_df.to_csv('installer/result_output/merge_df.csv')
+            # new_df.to_csv('installer/result_output/merge_df.csv')
 
             return new_df
 
