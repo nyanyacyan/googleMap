@@ -36,7 +36,7 @@ class Flow:
 ####################################################################################
 # ----------------------------------------------------------------------------------
 
-    def test_main(self, query, input_word):
+    def flow_main(self, query, input_word):
         key_df = self.get_gm_df.process(
             query=query,
         )
