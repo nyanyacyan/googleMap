@@ -5,7 +5,6 @@
 # ----------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------
 import os
-import const
 from dotenv import load_dotenv
 from method.base.B_googleMap import GoogleMapBase
 from method.base.B_html_replace import HtmlReplaceBase
@@ -127,25 +126,6 @@ class Test:
         )
 
         self.logger.info(f"html生成完了: 「result_output」の中にある「result_html_data」をご確認ください")
-
-
-
-
-#  DataFrameに追加するもの
-#  都道府県を追加
-#  市区町村を追加
-#  町名を追加
-#   写真のリンク先
-#  緯度と経度の中間を出す
-# TODO  レビューを追加（1から5までの3項目）
-
-
-# TODO DataFrameに余計なcolumnを削除する
-# TODO レビューをパターン化させる→レビューのｄｆを作るべきかを確認
-# TODO 
-# TODO 
-# TODO 
-
 
 
 

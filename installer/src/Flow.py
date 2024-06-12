@@ -1,15 +1,16 @@
 # coding: utf-8
 # ----------------------------------------------------------------------------------
-# 2023/4/19 更新
+# 2023/6/13 更新
 
 # ----------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------
 import os
 from dotenv import load_dotenv
-from base.B_googleMap import GoogleMapBase
-from get_gm_df import GetGMPlaceDf
-from df_merge import DfProcessMerge
-from base.utils import Logger
+from method.base.B_googleMap import GoogleMapBase
+from method.base.B_html_replace import HtmlReplaceBase
+from method.get_gm_df import GetGMPlaceDf
+from method.df_merge import DfProcessMerge
+from method.base.utils import Logger
 
 load_dotenv()
 
@@ -29,12 +30,13 @@ class Flow:
         self.get_gm_df = GetGMPlaceDf(api_key=self.api_key)
         self.df_merge = DfProcessMerge(api_key=self.api_key)
         self.gm_geocoding = GoogleMapBase(api_key=self.api_key)
+        self.html_replace = HtmlReplaceBase()
 
 
 ####################################################################################
 # ----------------------------------------------------------------------------------
 
-    def flow_main(self, query):
+    def test_main(self, query, input_word):
         key_df = self.get_gm_df.process(
             query=query,
         )
@@ -93,7 +95,7 @@ class Flow:
             key_df = add_photo_link_df,  # 更新したDataFrameを入れる
         )
 
-        # review_1
+        # review
         add_review_df =self.df_merge.review_merge_process(
             key_df = add_nave_position_df,  # 更新したDataFrameを入れる
             column = 'reviews',
@@ -103,7 +105,7 @@ class Flow:
         # review_html
         add_review_html_df = self.html_replace.df_to_row_process(
             df=add_review_df,
-            template_dir='installer/src/method/input_data',
+            template_dir='installer/src/method',
             file_name='review_format.html'
         )
 
@@ -111,29 +113,19 @@ class Flow:
         # 必要な情報に絞り込み
         sorted_df = self.gm_geocoding.df_sort(
             df=add_review_html_df,
-            new_order=['name', 'photos', 'geometry.viewport.northeast.lat', 'geometry.viewport.northeast.lng', 'geometry.viewport.southwest.lat', 'geometry.viewport.southwest.lng', 'japanese_address', 'formatted_phone_number', 'business_hours', 'close_days', 'url', 'prefectures', 'locality', 'photo_link','center_lat', 'center_lng', 'review1_rating', 'review2_rating', 'review3_rating', 'review4_rating', 'review5_rating', 'review1_name', 'review2_name', 'review3_name', 'review4_name', 'review5_name', 'review1_text', 'review2_text', 'review3_text', 'review4_text', 'review5_text', 'review_html']
+            new_order=['name', 'photos', 'geometry.viewport.northeast.lat', 'geometry.viewport.northeast.lng', 'geometry.viewport.southwest.lat', 'geometry.viewport.southwest.lng', 'japanese_address', 'formatted_phone_number', 'business_hours', 'close_days', 'website', 'prefectures', 'locality', 'photo_link','center_lat', 'center_lng', 'review1_rating', 'review2_rating', 'review3_rating', 'review4_rating', 'review5_rating', 'review1_name', 'review2_name', 'review3_name', 'review4_name', 'review5_name', 'review1_text', 'review2_text', 'review3_text', 'review4_text', 'review5_text', 'review_html']
         )
 
-        return sorted_df
+        # 全てを置換
+        self.html_replace.df_to_html(
+            df=sorted_df,
+            input_word=input_word,
+            template_dir='installer/src/method',
+            file_name='new_template.html',
+            update_file_path='installer/result_output/result_html_data'
+        )
 
-
-
-
-#  DataFrameに追加するもの
-#  都道府県を追加
-#  市区町村を追加
-#  町名を追加
-#   写真のリンク先
-#  緯度と経度の中間を出す
-# TODO  レビューを追加（1から5までの3項目）
-
-
-# TODO DataFrameに余計なcolumnを削除する
-# TODO レビューをパターン化させる→レビューのｄｆを作るべきかを確認
-# TODO 
-# TODO 
-# TODO 
-
+        self.logger.info(f"html生成完了: 「result_output」の中にある「result_html_data」をご確認ください")
 
 
 
@@ -143,5 +135,6 @@ class Flow:
 
 if __name__ == '__main__':
     query='調布 工務店'
+    input_word='正確性'
     flow_process= Flow()
-    flow_process.flow_main(query=query)
+    flow_process.flow_main(query=query, input_word=input_word)
