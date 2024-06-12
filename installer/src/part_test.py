@@ -58,32 +58,7 @@ class Test:
         )
 
 
-        # 必要な情報に絞り込み
-        # sorted_df = self.gm_geocoding.df_sort(
-        #     df=add_review_html_df,
-        #     new_order=['name', 'photos', 'geometry.viewport.northeast.lat', 'geometry.viewport.northeast.lng', 'geometry.viewport.southwest.lat', 'geometry.viewport.southwest.lng', 'japanese_address', 'formatted_phone_number', 'business_hours', 'close_days', 'url', 'prefectures', 'locality', 'photo_link','center_lat', 'center_lng', 'review1_rating', 'review2_rating', 'review3_rating', 'review4_rating', 'review5_rating', 'review1_name', 'review2_name', 'review3_name', 'review4_name', 'review5_name', 'review1_text', 'review2_text', 'review3_text', 'review4_text', 'review5_text', 'review_html']
-        # )
-
         return add_review_html_df
-
-
-
-
-#  DataFrameに追加するもの
-#  都道府県を追加
-#  市区町村を追加
-#  町名を追加
-#   写真のリンク先
-#  緯度と経度の中間を出す
-# TODO  レビューを追加（1から5までの3項目）
-
-
-# TODO DataFrameに余計なcolumnを削除する
-# TODO レビューをパターン化させる→レビューのｄｆを作るべきかを確認
-# TODO 
-# TODO 
-# TODO 
-
 
 
 

@@ -193,11 +193,43 @@ class HtmlReplaceBase:
 
             self.logger.warning(df['review_html'].tail(5))
 
-            self.logger.info(f"******** df_to_row_process end ********")
-
             df.to_csv('installer/result_output/review_html.csv')
 
+            self.logger.info(f"******** df_to_row_process end ********")
+
             return df
+
+        except Exception as e:
+            self.logger.error(f"df_to_row_process 処理中にエラーが発生: {e}")
+            raise
+
+
+# ----------------------------------------------------------------------------------
+# すべての値を置換してhtml出力する
+
+    def df_to_html(self, df, template_dir, file_name):
+        try:
+            self.logger.info(f"******** df_to_row_process start ********")
+
+            self.logger.debug(df.head(3))
+
+            # jinja2を使って置換を行う際、ファイルまでのディレクトリを記載（ファイル名を除く）
+            env = Environment(loader=FileSystemLoader(template_dir))
+
+            # ファイル名を指定する
+            template = env.get_template(file_name)
+
+            html_list = []
+
+            if not df.empty:
+                for index, row in df.iterrows():
+
+
+
+
+
+            self.logger.info(f"******** df_to_row_process end ********")
+
 
         except Exception as e:
             self.logger.error(f"df_to_row_process 処理中にエラーが発生: {e}")
