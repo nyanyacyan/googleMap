@@ -37,6 +37,10 @@ class Flow:
 # ----------------------------------------------------------------------------------
 
     def flow_main(self, query, input_word):
+
+        self.logger.warning(f"query: {query}")
+        self.logger.warning(f"input_word: {input_word}")
+
         key_df = self.get_gm_df.process(
             query=query,
         )
@@ -125,7 +129,7 @@ class Flow:
             update_file_path='installer/result_output/result_html_data'
         )
 
-        self.logger.warning(f"html生成完了: 「result_output」の中にある「result_html_data」をご確認ください")
+        self.logger.info(f"html生成完了: 「result_output」の中にある「result_html_data」をご確認ください")
 
 
 
@@ -133,8 +137,8 @@ class Flow:
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # テスト実施
 
-if __name__ == '__main__':
-    query='調布 工務店'
-    input_word='正確性'
-    flow_process= Flow()
-    flow_process.flow_main(query=query, input_word=input_word)
+# if __name__ == '__main__':
+#     query='調布 工務店'
+#     input_word='正確性'
+#     flow_process= Flow()
+#     flow_process.flow_main(query=query, input_word=input_word)
