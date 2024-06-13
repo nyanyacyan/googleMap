@@ -9,7 +9,6 @@ import requests
 import const
 import json
 import math
-import numpy as np
 import pandas as pd
 from tkinter import messagebox
 from dotenv import load_dotenv
