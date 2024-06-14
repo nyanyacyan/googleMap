@@ -264,7 +264,7 @@ class HtmlReplaceBase:
 
                     html_list.append(html_code)
 
-            html_list = ''.join(html_list)
+            html_list = '\n\n'.join(html_list)
 
             self.logger.debug(f"html_list: {html_list[:100]}")
 

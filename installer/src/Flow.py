@@ -125,7 +125,7 @@ class Flow:
             df=sorted_df,
             input_word=input_word,
             template_dir='installer/src/method',
-            file_name='new_template.html',
+            file_name='template.html',
             update_file_path='installer/result_output/result_html_data'
         )
 

@@ -698,7 +698,7 @@ class GoogleMapBase:
 
 
                 # 曜日ごとの時間を示す
-                format_business_hour = f"{day} : {format_open_time} 〜 {format_close_time}"
+                format_business_hour = f"{day} : {format_open_time} 〜 {format_close_time}<br>"
 
                 self.logger.info(f"format_business_hour: {format_business_hour}")
 
