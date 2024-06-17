@@ -70,6 +70,4 @@ DebugScreenshot/
 __pycache__/
 *.pycache
 
-bin/
-
 *.DS_Store
