@@ -1,0 +1,38 @@
+.
+├── .env
+├── .gitignore
+├── archive
+├── directory_structure.txt
+├── installer
+│   ├── bin
+│   │   ├── install.command
+│   │   ├── requirements.txt
+│   │   └── run.command
+│   ├── result_output
+│   │   └── result_html_data
+│   └── src
+│       ├── Flow.py
+│       ├── const.py
+│       ├── main.py
+│       └── method
+│           ├── base
+│           │   ├── B_googleMap.py
+│           │   ├── B_html_replace.py
+│           │   └── utils.py
+│           ├── df_merge.py
+│           ├── get_gm_df.py
+│           ├── googleMapRequest.py
+│           ├── html_replace.py
+│           ├── input_data
+│           │   ├── hlifkpholllijblknnmbfagnkjneagid 2.crx
+│           │   ├── hlifkpholllijblknnmbfagnkjneagid.crx
+│           │   ├── uBlock-Origin 2.crx
+│           │   └── uBlock-Origin.crx
+│           ├── new_template.html
+│           ├── review_format.html
+│           └── template.html
+└── test
+    ├── part_test.py
+    └── test_process.py
+
+10 directories, 26 files
