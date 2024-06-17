@@ -24,7 +24,7 @@ logs/
 *.mp4
 
 # テキストデータ
-*.txt
+# *.txt
 whisper_write_file.txt
 
 venv_shopers_scraping/
@@ -37,7 +37,7 @@ venv_shopers_scraping/
 *data*
 
 # コマンドファイル
-*.command
+# *.command
 
 # Pythonファイル
 *.pkg
