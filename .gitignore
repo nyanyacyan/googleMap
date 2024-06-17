@@ -2,7 +2,7 @@
 # git rm --cached ファイル名
 
 # 機密情報
-.env
+# .env
 
 # ログファイルを無視
 logs/
