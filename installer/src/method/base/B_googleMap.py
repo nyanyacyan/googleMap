@@ -12,6 +12,9 @@ import math
 import pandas as pd
 from tkinter import messagebox
 from dotenv import load_dotenv
+import asyncio
+import aiohttp
+from typing import Optional
 
 # 自作モジュール
 from .utils import Logger, NoneChecker
@@ -32,6 +35,33 @@ class GoogleMapBase:
         # noneチェック
         self.none = NoneChecker()
 
+###############################################################
+# ----------------------------------------------------------------------------------
+# Google mapAPIへのrequest(async)
+    async def fetch_data(self, endpoint_url, params, timeout):
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(endpoint_url, params=params, ssl=False, timeout=timeout) as response:
+                    if response.status == 200:
+                        json_data = await response.json()  # ここでawaitを使用して非同期操作を実行
+                        self.logger.info(f"リクエスト成功: {json_data}")
+                        return json_data
+
+                    elif response.status == 500:
+                        self.logger.error("google_map_api_request サーバーエラー")
+                        raise Exception("サーバーエラー")
+
+                    else:
+                        error_text = await response.text()  # ここでawaitを使用して非同期操作を実行
+                        self.logger.error(f"google_map_api_request リクエストした際にエラーが発生: {response.status} - {error_text}")
+                        raise Exception("リクエストした際にエラーが発生")
+        except aiohttp.ClientError as e:
+            self.logger.error(f"HTTPリクエスト中にクライアントエラーが発生しました: {str(e)}")
+            raise
+        except asyncio.TimeoutError:
+            self.logger.error("HTTPリクエストがタイムアウトしました")
+            raise
+
 
 ###############################################################
 # ----------------------------------------------------------------------------------
@@ -50,23 +80,10 @@ class GoogleMapBase:
                 'key' : self.api_key
             }
 
-            response = requests.get(endpoint_url, params=params, timeout=10)
-
+            # response = requests.get(endpoint_url, params=params, timeout=10)
+            response = asyncio.run(self.fetch_data(endpoint_url=endpoint_url, params=params, timeout=10))
             # self.logger.info(f"response: {response[:20]}")
-
-
-            if response.status_code == 200:
-                json_data = response.json()
-                self.logger.info(f"リクエスト成功: {json_data}")
-                return json_data
-
-            elif response.status_code == 500:
-                self.logger.error(f"google_map_api_request サーバーエラー")
-                raise Exception("サーバーエラー")
-
-            else:
-                self.logger.error(f"google_map_api_request リクエストした際にエラーが発生: {response.status_code} - {response.text}")
-                raise Exception("リクエストした際にエラーが発生")
+            return response
 
 
         except requests.exceptions.Timeout:
@@ -86,9 +103,6 @@ class GoogleMapBase:
 
         finally:
             self.logger.info(f"******** google_map_api_request 終了 ********")
-
-        return None
-
 
 # ----------------------------------------------------------------------------------
 # jsonファイルの全ての中身を確認
@@ -710,20 +724,22 @@ class GoogleMapBase:
                 day = days_of_week[day_data['open']['day']]
 
                 # 数値データを取得
-                open_time = day_data['open']['time']
-                close_time = day_data['close']['time']
+                # open_time = day_data['open']['time']
+                # close_time: Optional[str] = day_data['close']['time']
+                open_time = day_data.get('open', None)
+                close_time = day_data.get('close', None)
 
 
                 self.logger.debug(f"open_time: {open_time}, close_time: {close_time}")
                 self.logger.debug(f"open_time: {open_time}, close_time: {close_time}")
 
                 # 時間をサイトに表記する文字列に変換
-                format_open_time = self._format_time(open_time)
-                format_close_time = self._format_time(close_time)
+                # format_open_time = self._format_time(open_time[time])
+                # format_close_time = self._format_time(close_time[time])
 
 
                 # 曜日ごとの時間を示す
-                format_business_hour = f"{day} : {format_open_time} 〜 {format_close_time}<br>"
+                format_business_hour = f"{day} : {open_time} 〜 {close_time}<br>"
 
                 self.logger.info(f"format_business_hour: {format_business_hour}")
 
@@ -751,7 +767,6 @@ class GoogleMapBase:
             self.logger.info(f"time_str: {time_str}")
 
             if time_str:
-
                 formatted_time = f"{time_str[:2]}時{time_str[2:]}分"
 
                 # もし頭の文字が「0」だったら
