@@ -73,6 +73,7 @@ class GetGMPlaceDf(GoogleMapBase):
 
         except Exception as e:
             self.logger.error(f"get_gm_df_list 処理中にエラーが発生: {e}")
+            raise
 
 
 # ----------------------------------------------------------------------------------

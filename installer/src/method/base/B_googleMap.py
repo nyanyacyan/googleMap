@@ -71,17 +71,17 @@ class GoogleMapBase:
 
         except requests.exceptions.Timeout:
             self.logger.error(f"google_map_api_request リクエストでのタイムアウトエラー")
-            messagebox.askretrycancel('タイムアウトエラー', 'google_map_api_request リクエストでのタイムアウトエラー')
+            messagebox.showerror('タイムアウトエラー', 'google_map_api_request リクエストでのタイムアウトエラー')
             raise
 
         except requests.exceptions.RequestException as e:
             self.logger.error(f"google_map_api_request リクエストエラーが発生: {e}")
-            messagebox.askretrycancel('リクエストエラー', 'google_map_api_request リクエストエラーが発生')
+            messagebox.showerror('リクエストエラー', 'google_map_api_request リクエストエラーが発生')
             raise
 
         except Exception as e:
             self.logger.error(f"google_map_api_request 処理中にエラーが発生: {e}")
-            messagebox.askretrycancel('エラー', '処理中にエラーが発生')
+            messagebox.showerror('エラー', '処理中にエラーが発生')
             raise
 
         finally:
@@ -95,7 +95,7 @@ class GoogleMapBase:
 
     def _response_result_checker(self, json_data):
         try:
-            self.logger.info(f"******** response_result_checker 開始 ********")
+            self.logger.info(f"******** _response_result_checker 開始 ********")
 
             if json_data:
                 self.logger.debug(json.dumps(json_data, indent=2, ensure_ascii=False))
@@ -103,12 +103,12 @@ class GoogleMapBase:
             else:
                 raise Exception("json_data データがなし")
 
-            self.logger.info(f"******** response_result_checker 終了 ********")
+            self.logger.info(f"******** _response_result_checker 終了 ********")
 
 
         except Exception as e:
-            self.logger.error(f"response_result_checker 処理中にエラーが発生: {e}")
-            messagebox.askretrycancel('エラー', '処理中にエラーが発生')
+            messagebox.showerror('エラー', '処理中にエラーが発生')
+            self.logger.error(f"_response_result_checker 処理中にエラーが発生: {e}")
             raise
 
 
@@ -117,29 +117,29 @@ class GoogleMapBase:
 
 
     def _get_json_to_dataframe(self, json_data):
-        try:
-            self.logger.info(f"******** _get_json_to_dataframe 開始 ********")
 
-            # json_dataの中身を確認
-            self._response_result_checker(json_data=json_data)
+        self.logger.info(f"******** _get_json_to_dataframe 開始 ********")
 
-            # json_dataの「results」部分を抜き出す
-            # places = json_data.get('results', [])
+        # json_dataの中身を確認
+        self._response_result_checker(json_data=json_data)
 
-            # jsonデータをDataFrameに変換
-            df = pd.json_normalize(json_data)
+        # json_dataの「results」部分を抜き出す
+        # places = json_data.get('results', [])
 
-            self.logger.debug(df.head())
+        # jsonデータをDataFrameに変換
+        df = pd.json_normalize(json_data)
 
-            # DataFrameをデバッグ用にCSV出力
-            # df.to_csv('installer/result_output/res_df.csv')
+        self.logger.debug(df.head())
 
-            return df
+        # DataFrameをデバッグ用にCSV出力
+        # df.to_csv('installer/result_output/res_df.csv')
 
-        except Exception as e:
-            self.logger.error(f"_get_json_to_dataframe 処理中にエラーが発生: {e}")
-            messagebox.askretrycancel('エラー', '処理中にエラーが発生')
-            raise
+        return df
+
+        # except Exception as e:
+        #     messagebox.showerror('エラー', '処理中にエラーが発生')
+        #     self.logger.error(f"_get_json_to_dataframe 処理中にエラーが発生: {e}")
+        #     raise
 
 
 # ----------------------------------------------------------------------------------
@@ -174,7 +174,7 @@ class GoogleMapBase:
 
         except Exception as e:
             self.logger.error(f"get_column_data_in_df 処理中にエラーが発生: {e}")
-            messagebox.askretrycancel('エラー', '処理中にエラーが発生')
+            messagebox.showerror('エラー', '処理中にエラーが発生')
             raise
 
 
@@ -212,19 +212,19 @@ class GoogleMapBase:
 
         except KeyError as ke:
             self.logger.error(f"指定されたカラムにエラーがあります: {ke}")
-            messagebox.askretrycancel('エラー', '指定されたカラムにエラーがあります')
+            messagebox.showerror('エラー', '指定されたカラムにエラーがあります')
             raise
 
 
         except ValueError as ve:
             self.logger.error(f"指定したcolumnのデータが指定したJSONファイルにない: {ve}")
-            messagebox.askretrycancel('エラー', '処理中にエラーが発生')
+            messagebox.showerror('エラー', '処理中にエラーが発生')
             raise
 
 
         except Exception as e:
             self.logger.error(f"response_result_checker 処理中にエラーが発生: {e}")
-            messagebox.askretrycancel('エラー', '処理中にエラーが発生')
+            messagebox.showerror('エラー', '処理中にエラーが発生')
             raise
 
 
@@ -262,19 +262,19 @@ class GoogleMapBase:
 
         except KeyError as ke:
             self.logger.error(f"指定されたカラムにエラーがあります: {ke}")
-            messagebox.askretrycancel('エラー', '指定されたカラムにエラーがあります')
+            messagebox.showerror('エラー', '指定されたカラムにエラーがあります')
             raise
 
 
         except ValueError as ve:
             self.logger.error(f"指定したcolumnのデータが指定したJSONファイルにない: {ve}")
-            messagebox.askretrycancel('エラー', '処理中にエラーが発生')
+            messagebox.showerror('エラー', '処理中にエラーが発生')
             raise
 
 
         except Exception as e:
             self.logger.error(f"response_result_checker 処理中にエラーが発生: {e}")
-            messagebox.askretrycancel('エラー', '処理中にエラーが発生')
+            messagebox.showerror('エラー', '処理中にエラーが発生')
             raise
 
 # ----------------------------------------------------------------------------------
@@ -313,19 +313,19 @@ class GoogleMapBase:
 
         except KeyError as ke:
             self.logger.error(f"指定されたカラムにエラーがあります: {ke}")
-            messagebox.askretrycancel('エラー', '指定されたカラムにエラーがあります')
+            messagebox.showerror('エラー', '指定されたカラムにエラーがあります')
             raise
 
 
         except ValueError as ve:
             self.logger.error(f"指定したcolumnのデータが指定したJSONファイルにない: {ve}")
-            messagebox.askretrycancel('エラー', '処理中にエラーが発生')
+            messagebox.showerror('エラー', '処理中にエラーが発生')
             raise
 
 
         except Exception as e:
             self.logger.error(f"response_result_checker 処理中にエラーが発生: {e}")
-            messagebox.askretrycancel('エラー', '処理中にエラーが発生')
+            messagebox.showerror('エラー', '処理中にエラーが発生')
             raise
 
 
@@ -356,7 +356,7 @@ class GoogleMapBase:
 
         except Exception as e:
             self.logger.error(f"get_results_in_place_id_list 処理中にエラーが発生: {e}")
-            messagebox.askretrycancel('エラー', '処理中にエラーが発生')
+            messagebox.showerror('エラー', '処理中にエラーが発生')
             raise
 
 
@@ -397,17 +397,17 @@ class GoogleMapBase:
 
         except requests.exceptions.Timeout:
             self.logger.error(f"_plase_id_request リクエストでのタイムアウトエラー")
-            messagebox.askretrycancel('エラー', 'リクエストでのタイムアウトエラー')
+            messagebox.showerror('エラー', 'リクエストでのタイムアウトエラー')
             raise
 
         except requests.exceptions.RequestException as e:
             self.logger.error(f"_plase_id_request リクエストエラーが発生: {e}")
-            messagebox.askretrycancel('エラー', 'リクエストエラーが発生')
+            messagebox.showerror('エラー', 'リクエストエラーが発生')
             raise
 
         except Exception as e:
             self.logger.error(f"_plase_id_request 処理中にエラーが発生: {e}")
-            messagebox.askretrycancel('エラー', '処理中にエラーが発生')
+            messagebox.showerror('エラー', '処理中にエラーが発生')
             raise
 
         finally:
@@ -442,7 +442,7 @@ class GoogleMapBase:
 
         except Exception as e:
             self.logger.error(f"_get_results_list 処理中にエラーが発生: {e}")
-            messagebox.askretrycancel('_get_results_list', '処理中にエラーが発生')
+            messagebox.showerror('_get_results_list', '処理中にエラーが発生')
             raise
 
 
@@ -465,7 +465,7 @@ class GoogleMapBase:
 
         except Exception as e:
             self.logger.error(f"_to_df 処理中にエラーが発生: {e}")
-            messagebox.askretrycancel('_to_df', '処理中にエラーが発生')
+            messagebox.showerror('_to_df', '処理中にエラーが発生')
             raise
 
 
@@ -489,7 +489,7 @@ class GoogleMapBase:
 
         except Exception as e:
             self.logger.error(f"_df_marge 処理中にエラーが発生: {e}")
-            messagebox.askretrycancel('_df_margeエラー', '処理中にエラーが発生')
+            messagebox.showerror('_df_margeエラー', '処理中にエラーが発生')
             raise
 
 
@@ -512,7 +512,7 @@ class GoogleMapBase:
 
         except Exception as e:
             self.logger.error(f"_get_column_data 処理中にエラーが発生: {e}")
-            messagebox.askretrycancel('_get_column_dataエラー', '処理中にエラーが発生')
+            messagebox.showerror('_get_column_dataエラー', '処理中にエラーが発生')
             raise
 
 
@@ -570,7 +570,7 @@ class GoogleMapBase:
 
         except Exception as e:
             self.logger.error(f"address_to_japanese 処理中にエラーが発生: {e}")
-            messagebox.askretrycancel('address_to_japaneseエラー', '処理中にエラーが発生')
+            messagebox.showerror('address_to_japaneseエラー', '処理中にエラーが発生')
             raise
 
 
@@ -600,7 +600,7 @@ class GoogleMapBase:
 
         except Exception as e:
             self.logger.error(f"_str_Remove 処理中にエラーが発生: {e}")
-            messagebox.askretrycancel('_str_Removeエラー', '処理中にエラーが発生')
+            messagebox.showerror('_str_Removeエラー', '処理中にエラーが発生')
             raise
 
 
@@ -642,7 +642,7 @@ class GoogleMapBase:
 
         except Exception as e:
             self.logger.error(f"add_process_value_in_list 処理中にエラーが発生: {e}")
-            messagebox.askretrycancel('add_process_value_in_listエラー', '処理中にエラーが発生')
+            messagebox.showerror('add_process_value_in_listエラー', '処理中にエラーが発生')
             raise
 
 
@@ -681,7 +681,7 @@ class GoogleMapBase:
 
         except Exception as e:
             self.logger.error(f"review_add_process_value_in_list 処理中にエラーが発生: {e}")
-            messagebox.askretrycancel('review_add_process_value_in_listエラー', '処理中にエラーが発生')
+            messagebox.showerror('review_add_process_value_in_listエラー', '処理中にエラーが発生')
             raise
 
 
@@ -736,7 +736,7 @@ class GoogleMapBase:
 
         except Exception as e:
             self.logger.error(f"get_business_hour 処理中にエラーが発生: {e}")
-            messagebox.askretrycancel('get_business_hourエラー', '処理中にエラーが発生')
+            messagebox.showerror('get_business_hourエラー', '処理中にエラーが発生')
             raise
 
 
@@ -768,12 +768,12 @@ class GoogleMapBase:
 
         except ValueError as ve:
             self.logger.error(f"time_strが None です{ve}")
-            messagebox.askretrycancel('Noneエラー', 'time_strがNone')
+            messagebox.showerror('Noneエラー', 'time_strがNone')
             raise
 
         except Exception as e:
             self.logger.error(f"_format_time 処理中にエラーが発生: {e}")
-            messagebox.askretrycancel('_format_timeエラー', '処理中にエラーが発生')
+            messagebox.showerror('_format_timeエラー', '処理中にエラーが発生')
             raise
 
 
@@ -832,12 +832,12 @@ class GoogleMapBase:
 
         except ValueError as ve:
             self.logger.error(f"list_data が None: {ve}")
-            messagebox.askretrycancel('Noneエラー', 'list_data が None')
+            messagebox.showerror('Noneエラー', 'list_data が None')
             raise
 
         except Exception as e:
             self.logger.error(f"get_close_day 処理中にエラーが発生: {e}")
-            messagebox.askretrycancel('get_close_dayエラー', '処理中にエラーが発生')
+            messagebox.showerror('get_close_dayエラー', '処理中にエラーが発生')
             raise
 
 
@@ -886,11 +886,11 @@ class GoogleMapBase:
 
         except ValueError as ve:
             self.logger.error(f"list_data が None: {ve}")
-            messagebox.askretrycancel('Noneエラー', 'list_data が None')
+            messagebox.showerror('Noneエラー', 'list_data が None')
             raise
 
         except Exception as e:
-            messagebox.askretrycancel('get_reviews', '処理中にエラーが発生')
+            messagebox.showerror('get_reviews', '処理中にエラーが発生')
             raise
 
 # ----------------------------------------------------------------------------------
@@ -931,7 +931,7 @@ class GoogleMapBase:
 
         except Exception as e:
             self.logger.error(f"add_process_value_in_list 処理中にエラーが発生: {e}")
-            messagebox.askretrycancel('add_process_value_in_listエラー', '処理中にエラーが発生')
+            messagebox.showerror('add_process_value_in_listエラー', '処理中にエラーが発生')
             raise
 
 
@@ -970,12 +970,12 @@ class GoogleMapBase:
 
         except json.JSONDecodeError as json_err:
             self.logger.error(f"JSONDecodeError 処理中にエラーが発生: {json_err}")
-            messagebox.askretrycancel('JSONDecodeError エラー', '処理中にエラーが発生')
+            messagebox.showerror('JSONDecodeError エラー', '処理中にエラーが発生')
             raise
 
         except Exception as e:
             self.logger.error(f"get_json_data 処理中にエラーが発生: {e}")
-            messagebox.askretrycancel('get_json_data エラー', '処理中にエラーが発生')
+            messagebox.showerror('get_json_data エラー', '処理中にエラーが発生')
             raise
 
 
@@ -1011,17 +1011,17 @@ class GoogleMapBase:
 
         except ValueError as ve:
             self.logger.error(f"_get_address_data 期待してる値ではない: {ve}")
-            messagebox.askretrycancel('_get_address_dataエラー', '期待してる値ではない')
+            messagebox.showerror('_get_address_dataエラー', '期待してる値ではない')
             raise
 
         except TypeError as te:
             self.logger.error(f"_get_address_data 期待してるデータ型ではない: {te}")
-            messagebox.askretrycancel('_get_address_dataエラー', '期待してるデータ型ではない')
+            messagebox.showerror('_get_address_dataエラー', '期待してるデータ型ではない')
             raise
 
         except Exception as e:
             self.logger.error(f"_get_address_data 処理中にエラーが発生: {e}")
-            messagebox.askretrycancel('_get_address_data エラー', '処理中にエラーが発生')
+            messagebox.showerror('_get_address_data エラー', '処理中にエラーが発生')
             raise
 
 
@@ -1042,7 +1042,7 @@ class GoogleMapBase:
 
         except Exception as e:
             self.logger.error(f"_get_prefectures 処理中にエラーが発生: {e}")
-            messagebox.askretrycancel('_get_prefectures エラー', '処理中にエラーが発生')
+            messagebox.showerror('_get_prefectures エラー', '処理中にエラーが発生')
             raise
 
 
@@ -1063,7 +1063,7 @@ class GoogleMapBase:
 
         except Exception as e:
             self.logger.error(f"_get_locality 処理中にエラーが発生: {e}")
-            messagebox.askretrycancel('_get_locality エラー', '処理中にエラーが発生')
+            messagebox.showerror('_get_locality エラー', '処理中にエラーが発生')
             raise
 
 
@@ -1084,7 +1084,7 @@ class GoogleMapBase:
 
         except Exception as e:
             self.logger.error(f"_get_sublocality 処理中にエラーが発生: {e}")
-            messagebox.askretrycancel('_get_sublocality エラー', '処理中にエラーが発生')
+            messagebox.showerror('_get_sublocality エラー', '処理中にエラーが発生')
             raise
 
 
@@ -1126,7 +1126,7 @@ class GoogleMapBase:
 
         except Exception as e:
             self.logger.error(f"_get_photo_link 処理中にエラーが発生: {e}")
-            messagebox.askretrycancel('_get_photo_link エラー', '処理中にエラーが発生')
+            messagebox.showerror('_get_photo_link エラー', '処理中にエラーが発生')
             raise
 
 
@@ -1180,7 +1180,7 @@ class GoogleMapBase:
 
         except Exception as e:
             self.logger.error(f"_get_navi_position 処理中にエラーが発生: {e}")
-            messagebox.askretrycancel('_get_navi_position エラー', '処理中にエラーが発生')
+            messagebox.showerror('_get_navi_position エラー', '処理中にエラーが発生')
             raise
 
 
@@ -1248,7 +1248,7 @@ class GoogleMapBase:
 
         except Exception as e:
             self.logger.error(f"_sort_reviews_to_df 処理中にエラーが発生: {e}")
-            messagebox.askretrycancel('_sort_reviews_to_df エラー', '処理中にエラーが発生')
+            messagebox.showerror('_sort_reviews_to_df エラー', '処理中にエラーが発生')
             raise
 
 
@@ -1283,7 +1283,7 @@ class GoogleMapBase:
 
         except Exception as e:
             self.logger.error(f"df_sort 処理中にエラーが発生: {e}")
-            messagebox.askretrycancel(' df_sort エラー', '処理中にエラーが発生')
+            messagebox.showerror(' df_sort エラー', '処理中にエラーが発生')
             raise
 
 
@@ -1342,7 +1342,7 @@ class GoogleMapBase:
 
         except Exception as e:
             self.logger.error(f"get_gm_df_list 処理中にエラーが発生: {e}")
-            messagebox.askretrycancel('get_gm_df_list エラー', '処理中にエラーが発生')
+            messagebox.showerror('get_gm_df_list エラー', '処理中にエラーが発生')
             raise
 
 
