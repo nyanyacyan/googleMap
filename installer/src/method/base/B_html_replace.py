@@ -49,7 +49,6 @@ class HtmlReplaceBase:
         except FileNotFoundError as e:
             self.logger.error(f"{input_html_file_path} が見つかりません。pathを確認してください: {e}")
             messagebox.askretrycancel('エラー', f'{input_html_file_path}が見つかりません。pathを確認してください:{e}')
-
             raise
 
         except Exception as e:
@@ -86,6 +85,7 @@ class HtmlReplaceBase:
         except Exception as e:
             self.logger.error(f"{filed_name} _replace_base 処理中にエラーが発生: {e}")
             messagebox.askretrycancel('エラー', f'処理中にエラーが発生:{e}')
+            raise
 
 
 # ----------------------------------------------------------------------------------
@@ -110,7 +110,6 @@ class HtmlReplaceBase:
         except Exception as e:
             self.logger.error(f"{update_file_path} 書き込み中にエラーが発生: {e}")
             messagebox.askretrycancel('エラー', f'書き込み中にエラーが発生:{e}')
-
             raise
 
 
@@ -179,6 +178,7 @@ class HtmlReplaceBase:
         except Exception as e:
             self.logger.error(f"review_html_generate 処理中にエラーが発生: {e}")
             messagebox.askretrycancel('review_html_generate エラー', f'処理中にエラーが発生:{e}')
+            raise
 
 
 # ----------------------------------------------------------------------------------
@@ -279,7 +279,6 @@ class HtmlReplaceBase:
         except exceptions.TemplateNotFound:
             self.logger.error(f"Templateに指定してる{file_name}がみつからない: {e}")
             messagebox.askretrycancel('エラー', f'{file_name}がみつからない: {e}')
-
             raise
 
         except Exception as e:
