@@ -83,7 +83,7 @@ class DfProcessMerge(GoogleMapBase):
 
             self.logger.info(f"******** DfProcessMerge 終了 ********")
 
-            # new_df.to_csv('installer/result_output/merge_df.csv')
+            new_df.to_csv('installer/result_output/merge_df.csv')
 
             return new_df
 

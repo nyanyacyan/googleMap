@@ -734,12 +734,12 @@ class GoogleMapBase:
                 self.logger.debug(f"open_time: {open_time}, close_time: {close_time}")
 
                 # 時間をサイトに表記する文字列に変換
-                # format_open_time = self._format_time(open_time[time])
-                # format_close_time = self._format_time(close_time[time])
+                format_open_time = self._format_time(open_time[time])
+                format_close_time = self._format_time(close_time[time])
 
 
                 # 曜日ごとの時間を示す
-                format_business_hour = f"{day} : {open_time} 〜 {close_time}<br>"
+                format_business_hour = f"{day} : {format_open_time} 〜 {format_close_time}<br>"
 
                 self.logger.info(f"format_business_hour: {format_business_hour}")
 
