@@ -42,7 +42,14 @@ class GoogleMapBase:
         try:
             self.logger.info(f"******** fetch_data start ********")
 
+            # sessionを使うことで同じ通り道をそのまま使える
+            # sessionをCookie、認証情報をそのまま使える
+            # sessionを同じパラメータをそのまま使える
+            # sessionを使う場合には使ったあとに閉じる必要がある→withを使うことで閉じてる
             async with aiohttp.ClientSession() as session:
+
+                # sessionにて返ってきたレスポンスをエンドポイントに取りに行ってる
+                # withにすることで干渉を受けずに独立して実施される
                 async with session.get(endpoint_url, params=params, ssl=False, timeout=timeout) as response:
                     if response.status == 200:
                         json_data = await response.json()  # ここでawaitを使用して非同期操作を実行
