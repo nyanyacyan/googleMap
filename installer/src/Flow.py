@@ -64,8 +64,8 @@ class Flow:
         # 定休日
         add_close_days_df =self.df_merge.process(
             key_df = add_business_hours,  # 更新したDataFrameを入れる
-            column = 'opening_hours.periods',
-            add_func = self.gm_geocoding.get_close_days,
+            column = 'current_opening_hours.weekday_text',
+            add_func = self.gm_geocoding.get_close_day,
             new_column = 'close_days'
         )
 

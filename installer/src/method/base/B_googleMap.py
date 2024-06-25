@@ -784,10 +784,6 @@ class GoogleMapBase:
 
                 return business_hours
 
-            else:
-                self.logger.warning('listがない')
-                return "Googleマップに営業時間が登録されてません。"
-
 
         except Exception as e:
             self.logger.error(f"get_business_hour 処理中にエラーが発生: {e}")
@@ -852,6 +848,10 @@ class GoogleMapBase:
                 # setにてやっている曜日の数値を取得
                 open_day = {day_data['open']['day'] for day_data in list_data}
 
+                # [{'open': {'day': 0, 'time': '0000'}}]だった場合には定休日はなし
+                if any(day_data['open']['time'] == '0000' and 'close' not in day_data for day_data in list_data):
+                    return 'なし'
+
                 # set 関数にて７個までの長さを集合を作成（0, 1, 2, 3, 4, 5, 6）
                 all_days = set(range(7))
                 self.logger.debug(f"all_days:\n{all_days}")
@@ -890,6 +890,44 @@ class GoogleMapBase:
         except Exception as e:
             self.logger.error(f"get_close_day 処理中にエラーが発生: {e}")
             messagebox.showerror('get_close_dayエラー', '処理中にエラーが発生')
+            raise
+
+
+# ----------------------------------------------------------------------------------
+# 定休日を抽出
+
+    def get_close_day(self, list_data):
+        try:
+            self.logger.info(f"******** get_close_day start ********")
+
+            self.logger.debug(f"list_data: {list_data}")
+
+            if list_data:
+                close_days = [day for day in list_data if '定休日' in day]
+
+                self.logger.warning(f"close_days: {close_days}")
+
+                if not close_days:
+                    self.logger.debug("定休日なし")
+                    return 'なし'
+
+                # keyと値になってるものを':'の部分で分割して1つ目のデータを抽出してリストにする
+                close_days_keys = [day.split(':')[0].strip() for day in close_days]
+
+                # リストを結合
+                close_days_str = ', '.join(close_days_keys)
+
+                self.logger.info(f"close_days_str: {close_days_str}")
+
+                self.logger.info(f"******** get_close_day end ********")
+                return close_days_str
+
+            else:
+                return 'なし'
+
+
+        except Exception as e:
+            self.logger.error(f"get_close_day 処理中にエラーが発生: {e}")
             raise
 
 
@@ -1318,10 +1356,12 @@ class GoogleMapBase:
                 if all(col in df.columns for col in new_order):
                     sorted_df = df[new_order]
 
+
+
                 else:
+                    sorted_df.to_csv('installer/result_output/sorted_df.csv')
                     raise ValueError("new_orderで指定してるcolumnがDataFrameに存在しない")
 
-            # sorted_df.to_csv('installer/result_output/sorted_df.csv')
 
             self.logger.debug(f"df: \n{sorted_df.head(3)}")
 
