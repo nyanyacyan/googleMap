@@ -50,6 +50,7 @@ class GoogleMapBase:
 
                 # sessionにて返ってきたレスポンスをエンドポイントに取りに行ってる
                 # withにすることで干渉を受けずに独立して実施される
+                # ssl=False SSL/TLS証明書の検証を無効
                 async with session.get(endpoint_url, params=params, ssl=False, timeout=timeout) as response:
                     if response.status == 200:
                         json_data = await response.json()  # ここでawaitを使用して非同期操作を実行
