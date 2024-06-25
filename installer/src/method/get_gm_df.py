@@ -48,7 +48,7 @@ class GetGMPlaceDf(GoogleMapBase):
 
             # gmAPIリクエスト
             json_data = self._google_map_api_request(query=query)
-            time.sleep(10)
+            time.sleep(2)
 
             # plase_id_listを取得
             plase_id_list = self._get_place_id(json_data=json_data)

@@ -56,8 +56,8 @@ class Flow:
         # 営業時間
         add_business_hours =self.df_merge.process(
             key_df = add_japanese_address,  # 更新したDataFrameを入れる
-            column = 'opening_hours.periods',
-            add_func = self.gm_geocoding.get_business_hour,
+            column = 'current_opening_hours.weekday_text',
+            add_func = self.gm_geocoding.get_business_hours,
             new_column = 'business_hours'
         )
 

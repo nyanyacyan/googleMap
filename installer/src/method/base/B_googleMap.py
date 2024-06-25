@@ -40,11 +40,16 @@ class GoogleMapBase:
 # Google mapAPIへのrequest(async)
     async def fetch_data(self, endpoint_url, params, timeout):
         try:
+            self.logger.info(f"******** fetch_data start ********")
+
             async with aiohttp.ClientSession() as session:
                 async with session.get(endpoint_url, params=params, ssl=False, timeout=timeout) as response:
                     if response.status == 200:
                         json_data = await response.json()  # ここでawaitを使用して非同期操作を実行
                         self.logger.info(f"リクエスト成功: {json_data}")
+
+                        self.logger.info(f"******** fetch_data end ********")
+
                         return json_data
 
                     elif response.status == 500:
@@ -55,9 +60,11 @@ class GoogleMapBase:
                         error_text = await response.text()  # ここでawaitを使用して非同期操作を実行
                         self.logger.error(f"google_map_api_request リクエストした際にエラーが発生: {response.status} - {error_text}")
                         raise Exception("リクエストした際にエラーが発生")
+
         except aiohttp.ClientError as e:
             self.logger.error(f"HTTPリクエスト中にクライアントエラーが発生しました: {str(e)}")
             raise
+
         except asyncio.TimeoutError:
             self.logger.error("HTTPリクエストがタイムアウトしました")
             raise
@@ -375,7 +382,6 @@ class GoogleMapBase:
 
 
 # ----------------------------------------------------------------------------------
-
 # plase_idを使ってrequestをして詳細情報を取得
 
     def _place_id_request(self, place_id):
@@ -749,12 +755,43 @@ class GoogleMapBase:
 
             return business_hours_lst
 
+        except Exception as e:
+            self.logger.error(f"get_business_hour 処理中にエラーが発生: {e}")
+            raise
+
+
+
+# ----------------------------------------------------------------------------------
+# 営業時間データを修正する
+
+    def get_business_hours(self, list_data):
+        try:
+            self.logger.info(f"******** get_business_hours start ********")
+            self.logger.debug(f"list_data_type: {type(list_data)}")
+            self.logger.debug(f"list_data: {list_data}")
+
+            if list_data:
+
+                # リストの中の値が「定休日」になってるものを除去
+                close_day_remove_list = [day for day in list_data if '定休日' not in day]
+
+                # 改行で結合して表記したいデータに変換
+                business_hours = '\n'.join(close_day_remove_list)
+
+                self.logger.debug(f"business_hours: {business_hours}")
+
+                self.logger.info(f"******** get_business_hours end ********")
+
+                return business_hours
+
+            else:
+                self.logger.warning('listがない')
+                return "Googleマップに営業時間が登録されてません。"
+
 
         except Exception as e:
             self.logger.error(f"get_business_hour 処理中にエラーが発生: {e}")
-            messagebox.showerror('get_business_hourエラー', '処理中にエラーが発生')
             raise
-
 
 
 # ----------------------------------------------------------------------------------
