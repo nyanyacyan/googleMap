@@ -86,17 +86,17 @@ class Flow:
         )
 
 
-        # photo_link
-        add_photo_link_df =self.df_merge.process(
+        # photo_url
+        add_photo_url_df =self.df_merge.process(
             key_df = add_locality_df,  # 更新したDataFrameを入れる
             column = 'photos',
-            add_func = self.gm_geocoding._get_photo_link,
-            new_column = 'photo_link'
+            add_func = self.gm_geocoding.generate_photo_url,
+            new_column = 'photo_url'
         )
 
         # nave_position
         add_nave_position_df =self.df_merge.process2(
-            key_df = add_photo_link_df,  # 更新したDataFrameを入れる
+            key_df = add_photo_url_df,  # 更新したDataFrameを入れる
         )
 
         # review
@@ -117,7 +117,7 @@ class Flow:
         # 必要な情報に絞り込み
         sorted_df = self.gm_geocoding.df_sort(
             df=add_review_html_df,
-            new_order=['name', 'photos', 'geometry.viewport.northeast.lat', 'geometry.viewport.northeast.lng', 'geometry.viewport.southwest.lat', 'geometry.viewport.southwest.lng', 'japanese_address', 'formatted_phone_number', 'business_hours', 'close_days', 'website', 'prefectures', 'locality', 'photo_link','center_lat', 'center_lng', 'review1_rating', 'review2_rating', 'review3_rating', 'review4_rating', 'review5_rating', 'review1_name', 'review2_name', 'review3_name', 'review4_name', 'review5_name', 'review1_text', 'review2_text', 'review3_text', 'review4_text', 'review5_text', 'review_html']
+            new_order=['name', 'photos', 'geometry.viewport.northeast.lat', 'geometry.viewport.northeast.lng', 'geometry.viewport.southwest.lat', 'geometry.viewport.southwest.lng', 'japanese_address', 'formatted_phone_number', 'business_hours', 'close_days', 'website', 'prefectures', 'locality', 'photo_url','center_lat', 'center_lng', 'review1_rating', 'review2_rating', 'review3_rating', 'review4_rating', 'review5_rating', 'review1_name', 'review2_name', 'review3_name', 'review4_name', 'review5_name', 'review1_text', 'review2_text', 'review3_text', 'review4_text', 'review5_text', 'review_html']
         )
 
         # 全てを置換

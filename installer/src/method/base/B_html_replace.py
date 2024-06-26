@@ -231,7 +231,7 @@ class HtmlReplaceBase:
             if not df.empty:
                 for index, row in df.iterrows():
                     name = row['name']
-                    photo_link = row['photo_link']
+                    photo_url = row['photo_url']
                     prefectures = row['prefectures']
                     locality = row['locality']
                     input = input_word
@@ -247,7 +247,7 @@ class HtmlReplaceBase:
                     # レンダリングの実施
                     html_code = template.render(
                         name=name,
-                        photo_link=photo_link,
+                        photo_url=photo_url,
                         prefectures=prefectures,
                         locality=locality,
                         input=input,

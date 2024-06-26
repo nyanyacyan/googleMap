@@ -38,6 +38,7 @@ class GoogleMapBase:
 ###############################################################
 # ----------------------------------------------------------------------------------
 # Google mapAPIへのrequest(async)
+
     async def fetch_data(self, endpoint_url, params, timeout):
         try:
             self.logger.info(f"******** fetch_data start ********")
@@ -78,7 +79,6 @@ class GoogleMapBase:
             raise
 
 
-###############################################################
 # ----------------------------------------------------------------------------------
 # Google mapAPIへのrequest
 
@@ -784,7 +784,7 @@ class GoogleMapBase:
                 close_day_remove_list = [day for day in list_data if '定休日' not in day]
 
                 # 改行で結合して表記したいデータに変換
-                business_hours = '\n'.join(close_day_remove_list)
+                business_hours = '<br>'.join(close_day_remove_list)
 
                 self.logger.debug(f"business_hours: {business_hours}")
 
@@ -1229,7 +1229,104 @@ class GoogleMapBase:
 
 
 # ----------------------------------------------------------------------------------
-# TODO  緯度と経度の中間を出す
+
+
+
+
+# ----------------------------------------------------------------------------------
+# photo_referenceを取得
+
+    def _get_photo_reference(self, cell_data):
+        try:
+            self.logger.info(f"******** _get_photo_reference start ********")
+
+            self.logger.debug(f"cell_data: {cell_data}")
+
+            # 空の場合（NaN）の場合
+            if cell_data is None or (isinstance(cell_data, float) and math.isnan(cell_data)):
+                self.logger.debug(f"{cell_data} が None")
+                return "GoogleMapには写真の掲載なし"
+
+            # 写真データの最初の画像を使用
+            if isinstance(cell_data, list) and len(cell_data) > 0:
+                first_photo = cell_data[0]
+
+                # 最初のリンクを使用
+                if 'photo_reference' in first_photo and isinstance(first_photo['photo_reference'], str) and len(first_photo['photo_reference']) > 0:
+                    photo_reference = first_photo['photo_reference']
+
+                    self.logger.info(f"photo_reference: {photo_reference}")
+
+                    self.logger.info(f"********  _get_photo_reference end ********")
+
+                    return photo_reference
+
+            self.logger.debug(f"適切な写真が見つかりませんでした。")
+
+            self.logger.info(f"********  _get_photo_reference end ********")
+
+            return"GoogleMapには写真の掲載なし"
+
+
+        except Exception as e:
+            self.logger.error(f"_get_photo_reference 処理中にエラーが発生: {e}")
+            messagebox.showerror('_get_photo_reference エラー', '処理中にエラーが発生')
+            raise
+
+
+# ----------------------------------------------------------------------------------
+# Google mapAPIへのrequest
+
+    def generate_photo_url(self, cell_data, maxwidth=600):
+        try:
+            self.logger.info(f"******** _google_places_photo_api_request 開始 ********")
+
+            self.logger.debug(f"cell_data: {cell_data}")
+
+            # cell_dataに「適切な写真が見つかりませんでした。」が含まれている場合、Noneを返す
+            if isinstance(cell_data, str) and "適切な写真が見つかりませんでした" in cell_data:
+                self.logger.warning("適切な写真が見つかりませんでした。")
+                return None
+
+
+            photo_reference = self._get_photo_reference(cell_data=cell_data)
+
+            endpoint_url = const.photo_endpoint_url
+
+            params = {
+                'photo_reference' : photo_reference,  # 検索ワード
+                'key' : self.api_key,
+                'maxwidth' : maxwidth
+            }
+
+            url = f"{endpoint_url}?photoreference={params['photo_reference']}&key={params['key']}&maxwidth={params['maxwidth']}"
+
+            self.logger.warning(f"url: {url}")
+
+            return url
+
+
+        except requests.exceptions.Timeout:
+            self.logger.error(f"_google_places_photo_api_request リクエストでのタイムアウトエラー")
+            messagebox.showerror('タイムアウトエラー', '_google_places_photo_api_request リクエストでのタイムアウトエラー')
+            raise
+
+        except requests.exceptions.RequestException as e:
+            self.logger.error(f"_google_places_photo_api_request リクエストエラーが発生: {e}")
+            messagebox.showerror('リクエストエラー', '_google_places_photo_api_request リクエストエラーが発生')
+            raise
+
+        except Exception as e:
+            self.logger.error(f"_google_places_photo_api_request 処理中にエラーが発生: {e}")
+            messagebox.showerror('エラー', '処理中にエラーが発生')
+            raise
+
+        finally:
+            self.logger.info(f"******** _google_places_photo_api_request 終了 ********")
+
+
+# ----------------------------------------------------------------------------------
+#  緯度と経度の中間を出す
 
     def _get_navi_position(self, df):
         try:
