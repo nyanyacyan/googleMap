@@ -278,8 +278,8 @@ class HtmlReplaceBase:
             )
 
         except exceptions.TemplateNotFound:
-            self.logger.error(f"Templateに指定してる{file_name}がみつからない: {e}")
-            messagebox.showerror('エラー', f'{file_name}がみつからない: {e}')
+            self.logger.error(f"Templateに指定してる{file_name}がみつからない")
+            messagebox.showerror('エラー', f'{file_name}がみつからない')
             raise
 
         except Exception as e:

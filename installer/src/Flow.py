@@ -33,6 +33,11 @@ class Flow:
         self.html_replace = HtmlReplaceBase()
 
 
+        # full_pathインスタンス
+        self.result_html_data_dir = self._get_file_path_in_result_output('result_html_data')
+        self.method_dir = self._get_method_full_dir()
+
+
 ####################################################################################
 # ----------------------------------------------------------------------------------
 
@@ -109,7 +114,7 @@ class Flow:
         # review_html
         add_review_html_df = self.html_replace.df_to_row_process(
             df=add_review_df,
-            template_dir='installer/src/method',
+            template_dir=self.method_dir,
             file_name='review_format.html'
         )
 
@@ -124,9 +129,9 @@ class Flow:
         self.html_replace.df_to_html(
             df=sorted_df,
             input_word=input_word,
-            template_dir='installer/src/method',
+            template_dir=self.method_dir,
             file_name='template.html',
-            update_file_path='installer/result_output/result_html_data'
+            update_file_path=self.result_html_data_dir
         )
 
         self.logger.info(f"html生成完了: 「result_output」の中にある「result_html_data」をご確認ください")
@@ -134,7 +139,62 @@ class Flow:
 
 
 # ----------------------------------------------------------------------------------
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# installer/result_output/ までのフルパス
+# インスタンス化させてから使う
+
+    def _get_file_path_in_result_output(self, file_name):
+        try:
+            self.logger.info(f"******** _get_file_path_in_result_output start ********")
+
+            self.logger.debug(f"file_name: {file_name}")
+
+            flow_dir = (os.path.abspath(__file__))
+
+            src_dir = os.path.dirname(flow_dir)
+
+            installer_dir = os.path.dirname(src_dir)
+
+            file_path = os.path.join(installer_dir, 'result_output', file_name)
+
+            self.logger.warning(f"file_path: {file_path}")
+
+            self.logger.info(f"******** _get_file_path_in_result_output end ********")
+
+            return file_path
+
+        except Exception as e:
+            self.logger.error(f"_get_file_path_in_result_output 処理中にエラーが発生: {e}")
+            raise
+
+
+# ----------------------------------------------------------------------------------
+# installer/result_output/ までのフルパス
+# インスタンス化させてから使う
+
+    def _get_method_full_dir(self):
+        try:
+            self.logger.info(f"******** _get_method_full_dir start ********")
+
+            flow_dir = (os.path.abspath(__file__))
+
+            src_dir = os.path.dirname(flow_dir)
+
+            method_dir = os.path.join(src_dir, 'method')
+
+            self.logger.warning(f"method_dir: {method_dir}")
+
+            self.logger.info(f"******** _get_method_full_dir end ********")
+
+            return method_dir
+
+        except Exception as e:
+            self.logger.error(f"_get_method_full_dir 処理中にエラーが発生: {e}")
+            raise
+
+
+# ----------------------------------------------------------------------------------
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # テスト実施
 
 # if __name__ == '__main__':
