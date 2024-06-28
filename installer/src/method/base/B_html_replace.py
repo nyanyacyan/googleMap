@@ -5,9 +5,12 @@
 
 # ----------------------------------------------------------------------------------
 import re
+import os
 import pandas as pd
 from jinja2 import Environment, FileSystemLoader, exceptions
 from tkinter import messagebox
+from datetime import datetime
+
 
 # 自作モジュール
 from .utils import Logger, NoneChecker
@@ -26,10 +29,12 @@ class HtmlReplaceBase:
         # noneチェック
         self.none = NoneChecker()
 
+        self.time_stamp = datetime.now().strftime(' %Y%m%d_%H%M%S ')
+
 
 ###############################################################
 # ----------------------------------------------------------------------------------
-# htmlファイルの読み込み
+    # htmlファイルの読み込み
 
     def _html_file_read(self, input_html_file_path):
         try:
@@ -91,15 +96,20 @@ class HtmlReplaceBase:
 
     def _html_file_write(self, update_file_path, all_update_html_code):
         try:
-            self.logger.info(f"******** html_replace start ********")
-
-            with open(update_file_path, 'w', encoding='utf-8') as file:
-                new_html_file = file.write(all_update_html_code)
+            self.logger.info(f"******** _html_file_write start ********")
 
 
-            self.logger.info(f"********  html_replace end ********")
+            file_path_with_time = '_'.join([update_file_path, self.time_stamp])
 
-            return new_html_file
+            if not os.path.exists(file_path_with_time):
+
+                with open(file_path_with_time, 'w', encoding='utf-8') as file:
+                    file.write(all_update_html_code)
+
+
+            self.logger.info(f"********  _html_file_write end ********")
+
+            return file_path_with_time
 
         except FileNotFoundError as e:
             raise
