@@ -5,7 +5,7 @@
 
 # ----------------------------------------------------------------------------------
 import re
-import os
+import os, sys
 import pandas as pd
 from jinja2 import Environment, FileSystemLoader, exceptions
 from tkinter import messagebox
@@ -53,11 +53,13 @@ class HtmlReplaceBase:
 
         except FileNotFoundError as e:
             self.logger.error(f"{input_html_file_path} が見つかりません。pathを確認してください: {e}")
-            raise
+            messagebox.showerror("エラー", f"{input_html_file_path} が見つかりません。pathを確認してください: {e}")
+            sys.exit(1)
 
         except Exception as e:
             self.logger.error(f"{input_html_file_path}  読込中にエラーが発生: {e}")
-            raise
+            messagebox.showerror("エラー", f"処理中にエラーが発生しました: {e}")
+            sys.exit(1)
 
 
 # ----------------------------------------------------------------------------------
@@ -88,7 +90,8 @@ class HtmlReplaceBase:
 
         except Exception as e:
             self.logger.error(f"{filed_name} _replace_base 処理中にエラーが発生: {e}")
-            raise
+            messagebox.showerror("エラー", f"処理中にエラーが発生しました: {e}")
+            sys.exit(1)
 
 
 # ----------------------------------------------------------------------------------
@@ -111,12 +114,11 @@ class HtmlReplaceBase:
 
             return file_path_with_time
 
-        except FileNotFoundError as e:
-            raise
 
         except Exception as e:
             self.logger.error(f"{update_file_path} 書き込み中にエラーが発生: {e}")
-            raise
+            messagebox.showerror("エラー", f"処理中にエラーが発生しました: {e}")
+            sys.exit(1)
 
 
 # ----------------------------------------------------------------------------------
@@ -183,7 +185,8 @@ class HtmlReplaceBase:
 
         except Exception as e:
             self.logger.error(f"review_html_generate 処理中にエラーが発生: {e}")
-            raise
+            messagebox.showerror("エラー", f"処理中にエラーが発生しました: {e}")
+            sys.exit(1)
 
 
 # ----------------------------------------------------------------------------------
@@ -211,7 +214,8 @@ class HtmlReplaceBase:
 
         except Exception as e:
             self.logger.error(f"df_to_row_process 処理中にエラーが発生: {e}")
-            raise
+            messagebox.showerror("エラー", f"処理中にエラーが発生しました: {e}")
+            sys.exit(1)
 
 
 # ----------------------------------------------------------------------------------
@@ -282,11 +286,13 @@ class HtmlReplaceBase:
 
         except exceptions.TemplateNotFound:
             self.logger.error(f"Templateに指定してる{file_name}がみつからない")
-            raise
+            messagebox.showerror("エラー", f"Templateに指定してる{file_name}がみつからない: {e}")
+            sys.exit(1)
 
         except Exception as e:
             self.logger.error(f"df_to_row_process 処理中にエラーが発生: {e}")
-            raise
+            messagebox.showerror("エラー", f"処理中にエラーが発生しました: {e}")
+            sys.exit(1)
 
 
 # ----------------------------------------------------------------------------------

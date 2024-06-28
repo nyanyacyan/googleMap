@@ -3,8 +3,10 @@
 # 2023/6/4更新
 
 # ----------------------------------------------------------------------------------
-import time
+import time, sys
 import pandas as pd
+from tkinter import messagebox
+
 
 # 自作モジュール
 from .base.B_googleMap import GoogleMapBase
@@ -89,7 +91,8 @@ class DfProcessMerge(GoogleMapBase):
 
         except Exception as e:
             self.logger.error(f"DfProcessMerge 処理中にエラーが発生: {e}")
-
+            messagebox.showerror("エラー", f"処理中にエラーが発生しました: {e}")
+            sys.exit(1)
 
 # ----------------------------------------------------------------------------------
 # DataFrameから直接結合
@@ -114,7 +117,8 @@ class DfProcessMerge(GoogleMapBase):
 
         except Exception as e:
             self.logger.error(f"DfProcessMerge 処理中にエラーが発生: {e}")
-
+            messagebox.showerror("エラー", f"処理中にエラーが発生しました: {e}")
+            sys.exit(1)
 
 # ----------------------------------------------------------------------------------
 
@@ -146,7 +150,8 @@ class DfProcessMerge(GoogleMapBase):
 
         except Exception as e:
             self.logger.error(f"review_merge_process 処理中にエラーが発生: {e}")
-
+            messagebox.showerror("エラー", f"処理中にエラーが発生しました: {e}")
+            sys.exit(1)
 
 # ----------------------------------------------------------------------------------
 # reviewのhtmlをmergeさせる
@@ -180,6 +185,7 @@ class DfProcessMerge(GoogleMapBase):
 
         except Exception as e:
             self.logger.error(f"review_html_merge_process 処理中にエラーが発生: {e}")
-
+            messagebox.showerror("エラー", f"処理中にエラーが発生しました: {e}")
+            sys.exit(1)
 
 # ----------------------------------------------------------------------------------

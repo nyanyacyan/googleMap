@@ -4,13 +4,15 @@
 
 # ----------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------
-import os
+import os, sys
+from tkinter import messagebox
 from dotenv import load_dotenv
 from method.base.B_googleMap import GoogleMapBase
 from method.base.B_html_replace import HtmlReplaceBase
 from method.get_gm_df import GetGMPlaceDf
 from method.df_merge import DfProcessMerge
 from method.base.utils import Logger
+
 
 load_dotenv()
 
@@ -164,7 +166,8 @@ class Flow:
 
         except Exception as e:
             self.logger.error(f"_get_file_path_in_result_output 処理中にエラーが発生: {e}")
-            raise
+            messagebox.showerror("エラー", f"処理中にエラーが発生しました: {e}")
+            sys.exit(1)
 
 
 # ----------------------------------------------------------------------------------
@@ -189,7 +192,8 @@ class Flow:
 
         except Exception as e:
             self.logger.error(f"_get_method_full_dir 処理中にエラーが発生: {e}")
-            raise
+            messagebox.showerror("エラー", f"処理中にエラーが発生しました: {e}")
+            sys.exit(1)
 
 
 # ----------------------------------------------------------------------------------
