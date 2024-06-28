@@ -23,7 +23,7 @@ class Main:
         self.logger = self.setup_logger.setup_logger()
 
         # インスタンス
-        self.flow = Flow()
+        self.flow = Flow(query=search_word_entry.get())
 
 
 ####################################################################################
@@ -32,7 +32,7 @@ class Main:
 
     def main(self):
         self.flow.flow_main(
-            query=search_word_entry.get(),
+            # query=search_word_entry.get(),
             input_word=recommend_entry.get()
         )
 
@@ -79,7 +79,7 @@ if __name__ == '__main__':
     recommend_frame.grid(row=1, column=0, sticky=W)
 
     #recommend 説明欄（左側）
-    # padding=(10, 10)この部分がラベルの余白を設定。　左側「左右」、右側「上下」の余白
+    # padding=(10, 10)この部分がラベルの余白を設定。左側「左右」、右側「上下」の余白
     recommend_label = ttk.Label(recommend_frame, text="レコメンド", width=8, padding=(10, 10))
     recommend_label.grid(row=1, column=0)
 

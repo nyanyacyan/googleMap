@@ -20,7 +20,9 @@ load_dotenv()
 
 
 class Flow:
-    def __init__(self, debug_mode=False):
+    def __init__(self, query, debug_mode=False):
+
+        self.query = query
         # logger
         self.setup_logger = Logger(__name__, debug_mode=debug_mode)
         self.logger = self.setup_logger.setup_logger()
@@ -36,20 +38,20 @@ class Flow:
 
 
         # full_pathインスタンス
-        self.result_html_data_dir = self._get_file_path_in_result_output('result_html_data')
+        self.result_html_data_dir = self._get_file_path_in_result_output(file_name=self.query)
         self.method_dir = self._get_method_full_dir()
 
 
 ####################################################################################
 # ----------------------------------------------------------------------------------
 
-    def flow_main(self, query, input_word):
+    def flow_main(self, input_word):
 
-        self.logger.warning(f"query: {query}")
+        self.logger.warning(f"query: {self.query}")
         self.logger.warning(f"input_word: {input_word}")
 
         key_df = self.get_gm_df.process(
-            query=query,
+            query=self.query,
         )
 
         # 住所
